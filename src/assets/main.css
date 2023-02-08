@@ -1,0 +1,75 @@
+@import './base.css';
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Serif:opsz,wght@8..144,300&display=swap');
+
+#app {
+  margin: 0 auto;
+  font-weight: normal;
+  height: 100%;
+}
+
+a,
+.green {
+  text-decoration: none;
+  color: hsla(160, 100%, 37%, 1);
+  transition: 0.4s;
+}
+
+@media (hover: hover) {
+  a:hover {
+    background-color: hsla(160, 100%, 37%, 0.2);
+  }
+}
+
+@media (min-width: 1024px) {
+  body {
+    display: flex;
+    place-items: center;
+    width: 95vw;
+  }
+
+  #app {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 0 2rem;
+  }
+}
+
+.mainColour{
+  background-color: #790404
+}
+
+.secondaryColour{
+  color: #0f8fef;
+}
+
+.mainFont{
+  font-family: 'Roboto Serif', serif;
+}
+
+
+
+#content-wrap {
+  padding-top: 100px;
+  padding-bottom: 130px;
+  left: 0;
+  width: 100%;
+}
+
+#footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100.43vw;
+  height: 2.5rem;
+  padding: 0;
+  margin: 0 0 -2vw -3vw;
+}
+
+#header{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+}
+

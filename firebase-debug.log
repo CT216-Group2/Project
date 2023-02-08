@@ -1,0 +1,82 @@
+[debug] [2023-02-02T10:51:33.606Z] ----------------------------------------------------------------------
+[debug] [2023-02-02T10:51:33.608Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\USER\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy
+[debug] [2023-02-02T10:51:33.608Z] CLI Version:   11.16.0
+[debug] [2023-02-02T10:51:33.608Z] Platform:      win32
+[debug] [2023-02-02T10:51:33.608Z] Node Version:  v16.17.1
+[debug] [2023-02-02T10:51:33.620Z] Time:          Thu Feb 02 2023 10:51:33 GMT+0000 (Greenwich Mean Time)
+[debug] [2023-02-02T10:51:33.620Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2023-02-02T10:51:33.624Z] >>> [apiv2][query] GET https://firebase-public.firebaseio.com/cli.json [none]
+[debug] [2023-02-02T10:51:33.704Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2023-02-02T10:51:33.704Z] > authorizing via signed-in user (mogill1204@gmail.com)
+[debug] [2023-02-02T10:51:33.704Z] [iam] checking project accommodateme-f4887 for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2023-02-02T10:51:33.705Z] > refreshing access token with scopes: []
+[debug] [2023-02-02T10:51:33.706Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2023-02-02T10:51:33.706Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2023-02-02T10:51:34.074Z] <<< [apiv2][status] GET https://firebase-public.firebaseio.com/cli.json 200
+[debug] [2023-02-02T10:51:34.074Z] <<< [apiv2][body] GET https://firebase-public.firebaseio.com/cli.json {"cloudBuildErrorAfter":1594252800000,"cloudBuildWarnAfter":1590019200000,"defaultNode10After":1594252800000,"minVersion":"3.0.5","node8DeploysDisabledAfter":1613390400000,"node8RuntimeDisabledAfter":1615809600000,"node8WarnAfter":1600128000000}
+[debug] [2023-02-02T10:51:34.090Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2023-02-02T10:51:34.090Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2023-02-02T10:51:34.104Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/accommodateme-f4887:testIamPermissions [none]
+[debug] [2023-02-02T10:51:34.104Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/accommodateme-f4887:testIamPermissions x-goog-quota-user=projects/accommodateme-f4887
+[debug] [2023-02-02T10:51:34.104Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/accommodateme-f4887:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2023-02-02T10:51:34.491Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/accommodateme-f4887:testIamPermissions 200
+[debug] [2023-02-02T10:51:34.491Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/accommodateme-f4887:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2023-02-02T10:51:34.491Z] >>> [apiv2][query] POST https://iam.googleapis.com/v1/projects/accommodateme-f4887/serviceAccounts/accommodateme-f4887@appspot.gserviceaccount.com:testIamPermissions [none]
+[debug] [2023-02-02T10:51:34.491Z] >>> [apiv2][body] POST https://iam.googleapis.com/v1/projects/accommodateme-f4887/serviceAccounts/accommodateme-f4887@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[debug] [2023-02-02T10:51:34.909Z] <<< [apiv2][status] POST https://iam.googleapis.com/v1/projects/accommodateme-f4887/serviceAccounts/accommodateme-f4887@appspot.gserviceaccount.com:testIamPermissions 200
+[debug] [2023-02-02T10:51:34.909Z] <<< [apiv2][body] POST https://iam.googleapis.com/v1/projects/accommodateme-f4887/serviceAccounts/accommodateme-f4887@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[debug] [2023-02-02T10:51:34.910Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/accommodateme-f4887 [none]
+[debug] [2023-02-02T10:51:35.258Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/accommodateme-f4887 200
+[debug] [2023-02-02T10:51:35.258Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/accommodateme-f4887 {"projectId":"accommodateme-f4887","projectNumber":"209447308173","displayName":"AccommodateME","name":"projects/accommodateme-f4887","resources":{"hostingSite":"accommodateme-f4887"},"state":"ACTIVE","etag":"1_94cc8aff-ddb6-4fbf-be7e-9f7182ed12f4"}
+[info] 
+[info] === Deploying to 'accommodateme-f4887'...
+[info] 
+[info] i  deploying functions, hosting 
+[debug] [2023-02-02T10:51:35.262Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/accommodateme-f4887 [none]
+[debug] [2023-02-02T10:51:36.239Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/accommodateme-f4887 200
+[debug] [2023-02-02T10:51:36.239Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/accommodateme-f4887 {"projectId":"accommodateme-f4887","projectNumber":"209447308173","displayName":"AccommodateME","name":"projects/accommodateme-f4887","resources":{"hostingSite":"accommodateme-f4887"},"state":"ACTIVE","etag":"1_94cc8aff-ddb6-4fbf-be7e-9f7182ed12f4"}
+[info] i  functions: ensuring required API cloudfunctions.googleapis.com is enabled... 
+[info] i  functions: ensuring required API cloudbuild.googleapis.com is enabled... 
+[info] i  artifactregistry: ensuring required API artifactregistry.googleapis.com is enabled... 
+[debug] [2023-02-02T10:51:36.247Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/accommodateme-f4887/services/cloudfunctions.googleapis.com [none]
+[debug] [2023-02-02T10:51:36.247Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/accommodateme-f4887/services/cloudfunctions.googleapis.com x-goog-quota-user=projects/accommodateme-f4887
+[debug] [2023-02-02T10:51:36.250Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/accommodateme-f4887/services/runtimeconfig.googleapis.com [none]
+[debug] [2023-02-02T10:51:36.250Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/accommodateme-f4887/services/runtimeconfig.googleapis.com x-goog-quota-user=projects/accommodateme-f4887
+[debug] [2023-02-02T10:51:36.253Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/accommodateme-f4887/services/cloudbuild.googleapis.com [none]
+[debug] [2023-02-02T10:51:36.253Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/accommodateme-f4887/services/cloudbuild.googleapis.com x-goog-quota-user=projects/accommodateme-f4887
+[debug] [2023-02-02T10:51:36.257Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/accommodateme-f4887/services/artifactregistry.googleapis.com [none]
+[debug] [2023-02-02T10:51:36.257Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/accommodateme-f4887/services/artifactregistry.googleapis.com x-goog-quota-user=projects/accommodateme-f4887
+[debug] [2023-02-02T10:51:37.164Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/accommodateme-f4887/services/runtimeconfig.googleapis.com 200
+[debug] [2023-02-02T10:51:37.164Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/accommodateme-f4887/services/runtimeconfig.googleapis.com [omitted]
+[debug] [2023-02-02T10:51:37.165Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/accommodateme-f4887/services/artifactregistry.googleapis.com 200
+[debug] [2023-02-02T10:51:37.165Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/accommodateme-f4887/services/artifactregistry.googleapis.com [omitted]
+[warn] !  artifactregistry: missing required API artifactregistry.googleapis.com. Enabling now... 
+[debug] [2023-02-02T10:51:37.166Z] >>> [apiv2][query] POST https://serviceusage.googleapis.com/v1/projects/accommodateme-f4887/services/artifactregistry.googleapis.com:enable [none]
+[debug] [2023-02-02T10:51:37.166Z] >>> [apiv2][(partial)header] POST https://serviceusage.googleapis.com/v1/projects/accommodateme-f4887/services/artifactregistry.googleapis.com:enable x-goog-quota-user=projects/accommodateme-f4887
+[debug] [2023-02-02T10:51:37.168Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/accommodateme-f4887/services/cloudfunctions.googleapis.com 200
+[debug] [2023-02-02T10:51:37.168Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/accommodateme-f4887/services/cloudfunctions.googleapis.com [omitted]
+[info] +  functions: required API cloudfunctions.googleapis.com is enabled 
+[debug] [2023-02-02T10:51:37.240Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/accommodateme-f4887/services/cloudbuild.googleapis.com 200
+[debug] [2023-02-02T10:51:37.240Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/accommodateme-f4887/services/cloudbuild.googleapis.com [omitted]
+[warn] !  functions: missing required API cloudbuild.googleapis.com. Enabling now... 
+[debug] [2023-02-02T10:51:37.241Z] >>> [apiv2][query] POST https://serviceusage.googleapis.com/v1/projects/accommodateme-f4887/services/cloudbuild.googleapis.com:enable [none]
+[debug] [2023-02-02T10:51:37.241Z] >>> [apiv2][(partial)header] POST https://serviceusage.googleapis.com/v1/projects/accommodateme-f4887/services/cloudbuild.googleapis.com:enable x-goog-quota-user=projects/accommodateme-f4887
+[debug] [2023-02-02T10:51:38.133Z] <<< [apiv2][status] POST https://serviceusage.googleapis.com/v1/projects/accommodateme-f4887/services/artifactregistry.googleapis.com:enable 200
+[debug] [2023-02-02T10:51:38.133Z] <<< [apiv2][body] POST https://serviceusage.googleapis.com/v1/projects/accommodateme-f4887/services/artifactregistry.googleapis.com:enable [omitted]
+[debug] [2023-02-02T10:51:38.327Z] <<< [apiv2][status] POST https://serviceusage.googleapis.com/v1/projects/accommodateme-f4887/services/cloudbuild.googleapis.com:enable 200
+[debug] [2023-02-02T10:51:38.328Z] <<< [apiv2][body] POST https://serviceusage.googleapis.com/v1/projects/accommodateme-f4887/services/cloudbuild.googleapis.com:enable [omitted]
+[debug] [2023-02-02T10:51:48.142Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/accommodateme-f4887/services/artifactregistry.googleapis.com [none]
+[debug] [2023-02-02T10:51:48.143Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/accommodateme-f4887/services/artifactregistry.googleapis.com x-goog-quota-user=projects/accommodateme-f4887
+[debug] [2023-02-02T10:51:48.341Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/accommodateme-f4887/services/cloudbuild.googleapis.com [none]
+[debug] [2023-02-02T10:51:48.341Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/accommodateme-f4887/services/cloudbuild.googleapis.com x-goog-quota-user=projects/accommodateme-f4887
+[debug] [2023-02-02T10:51:48.957Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/accommodateme-f4887/services/artifactregistry.googleapis.com 200
+[debug] [2023-02-02T10:51:48.957Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/accommodateme-f4887/services/artifactregistry.googleapis.com [omitted]
+[info] +  artifactregistry: required API artifactregistry.googleapis.com is enabled 
+[debug] [2023-02-02T10:51:49.178Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/accommodateme-f4887/services/cloudbuild.googleapis.com 200
+[debug] [2023-02-02T10:51:49.179Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/accommodateme-f4887/services/cloudbuild.googleapis.com [omitted]
+[info] +  functions: required API cloudbuild.googleapis.com is enabled 
+[debug] [2023-02-02T10:51:49.181Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/accommodateme-f4887/adminSdkConfig [none]
+[debug] [2023-02-02T10:51:49.548Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/accommodateme-f4887/adminSdkConfig 200
+[debug] [2023-02-02T10:51:49.548Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/accommodateme-f4887/adminSdkConfig {"projectId":"accommodateme-f4887","storageBucket":"accommodateme-f4887.appspot.com"}
+[debug] [2023-02-02T10:51:49.549Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/accommodateme-f4887/configs [none]
