@@ -4,13 +4,12 @@ import Footer from "@/components/Footer.vue";
 </script>
 
 <template>
-  <router-view></router-view>
   <body>
     <header id="header">
       <NavBar/>
     </header>
     <div id="content-wrap">
-
+      <router-view></router-view>
     </div>
     <footer id="footer">
       <Footer/>
