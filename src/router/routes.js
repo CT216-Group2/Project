@@ -1,7 +1,9 @@
 function loadPage (component) {
 // '@' is aliased to src/components
     return () => import(/* webpackChunkName: "[request]" */
-        `@/pages/${component}.vue`)}
+        `@/Pages/${component}.vue`)}
 export default [
-    { path: '/', component: loadPage('Home') }
+    { path: '/StudentSignUp', component: loadPage('StudentSignUp') },
+    { path: '/OwnerSignUp', component: loadPage('OwnerSignUp')},
+    { path: '/HelloWorld', component: loadPage('HelloWorld')}
 ]
