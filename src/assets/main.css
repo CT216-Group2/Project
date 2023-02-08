@@ -46,7 +46,10 @@ a,
   font-family: 'Roboto Serif', serif;
 }
 
-
+.btnFont{
+  font-family: 'Roboto Serif', serif;
+  color: #0f8fef;
+}
 
 #content-wrap {
   padding-top: 100px;
