@@ -9,7 +9,7 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item">
-              <a class="nav-link active mainFont" aria-current="page" href="#">Home</a>
+              <a class="nav-link active mainFont" aria-current="page"><router-link to="/" class="router-link">Home</router-link></a>
             </li>
             <li class="nav-item">
               <a class="nav-link mainFont" href="#">About</a>
@@ -19,10 +19,10 @@
                 Account
               </a>
               <ul class="dropdown-menu">
-                <li><a class="dropdown-item mainFont" href="#">Profile</a></li>
+                <li><a class="dropdown-item mainFont"><router-link to="/OwnerAccount" class="black">Profile</router-link> </a></li>
                 <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item mainFont" href="#">Login</a></li>
-                <li><a class="dropdown-item mainFont" href="#">Sign up</a></li>
+                <li><a class="dropdown-item mainFont"><router-link to="/Login" class="black">Login</router-link></a></li>
+                <li><a class="dropdown-item mainFont"><router-link to="/OwnerSignUp" class="black">Sign up</router-link> </a></li>
               </ul>
             </li>
           </ul>
