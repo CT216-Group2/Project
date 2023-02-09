@@ -76,3 +76,11 @@ a,
   width: 100vw;
 }
 
+.router-link{
+  display: block;
+  color: lightgrey;
+}
+
+.black{
+  color: black;
+}
