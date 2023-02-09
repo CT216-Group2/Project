@@ -59,7 +59,7 @@
           required
           ></v-text-field>
 
-          <v-btn color="primary" @click="submit" :disabled="!valid">Sign Up</v-btn>
+          <v-btn color="#790404" @click="submit" :disabled="!valid">Sign Up</v-btn>
         </v-form>
       </v-col>
     </v-row>
