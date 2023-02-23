@@ -1,0 +1,3 @@
+<template>
+  yup bro
+</template>
