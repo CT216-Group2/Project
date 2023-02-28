@@ -8,5 +8,6 @@ export default [
     { path: '/OwnerSignUp', component: loadPage('OwnerSignUp')},
     { path: '/StudentAccount', component: loadPage('StudentAccount') },
     { path: '/OwnerAccount', component: loadPage('OwnerAccount') },
-    {path: '/Login',component: loadPage('Login')}
+    {path: '/StudentLogin',component: loadPage('StudentLogin')},
+    {path: '/OwnerLogin',component: loadPage('OwnerLogin')}
 ]

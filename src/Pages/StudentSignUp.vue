@@ -1,4 +1,5 @@
 <template>
+
   <v-container>
     <v-row justify="center">
       <v-col cols="12" sm="8" md="4">
@@ -9,12 +10,14 @@
               label="Name"
               required
           ></v-text-field>
+
           <v-text-field
               v-model="email"
               :rules="emailRules"
               label="Email"
               required
           ></v-text-field>
+
           <v-text-field
               v-model="password"
               :append-icon="showPassword ? 'visibility' : 'visibility_off'"
@@ -24,32 +27,47 @@
               label="Password"
               required
           ></v-text-field>
+
           <v-text-field
-              v-model="area"
-              :rules="areaRules"
-              label="Area"
+              v-model="collegeName"
+              :rules="collegeNameRules"
+              label="College Name"
               required
           ></v-text-field>
 
-          <v-btn color="#790404" @click="submit" :disabled="!valid"><a class="mainFont text-white">Sign Up</a></v-btn>
+          <v-text-field
+              v-model="courseName"
+              :rules="courseNameRules"
+              label="Course Name"
+              required
+          ></v-text-field>
 
+          <v-text-field
+              v-model="yearOfStudy"
+              :rules="yearOfStudyRules"
+              label="Year of Study"
+              required
+          ></v-text-field>
+
+          <v-btn color="#790404" @click="submit()" :disabled="!valid"><a class="mainColour mainFont">Sign Up<</a></v-btn>
         </v-form>
       </v-col>
     </v-row>
   </v-container>
-
 </template>
 
 <script>
 export default {
-  data(){
-    return{
+  data() {
+    return {
       valid: false,
       name: "",
       email: "",
       password: "",
       showPassword: false,
-      area: "",
+      collegeName: "",
+      courseName: "",
+      yearOfStudy: "",
       nameRules: [
         v => !!v || "Name is required",
         v => v.length <= 20 || "Name must be less than 20 characters"
@@ -62,9 +80,17 @@ export default {
         v => !!v || "Password is required",
         v => v.length >= 6 || "Password must be at least 6 characters"
       ],
-      areaRules: [
-        v => !!v || "Area name is required",
-        v => v.length <= 20 || "Area name must be less than 20 characters"
+      collegeNameRules: [
+        v => !!v || "College name is required",
+        v => v.length <= 20 || "College name must be less than 20 characters"
+      ],
+      courseNameRules: [
+        v => !!v || "Course name is required",
+        v => v.length <= 20 || "Course name must be less than 20 characters"
+      ],
+      yearOfStudyRules: [
+        v => !!v || "Year of study is required",
+        v => /^[0-9]+$/.test(v) || "Year of study must be a number"
       ]
     };
   },
@@ -72,11 +98,11 @@ export default {
     submit() {
       this.$refs.form.validate();
       if (this.valid) {
-        // send data to server
+
+        }
       }
     }
-  }
-};
+}
 </script>
 
 <style scoped>
