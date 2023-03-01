@@ -48,8 +48,7 @@
               label="Year of Study"
               required
           ></v-text-field>
-
-          <v-btn color="#790404" @click="submit()" :disabled="!valid"><a class="mainColour mainFont">Sign Up<</a></v-btn>
+          <v-btn color="#790404" @click="submit()" :disabled="!valid"><a class="mainColour mainFont">Sign Up</a></v-btn>
         </v-form>
       </v-col>
     </v-row>
@@ -57,7 +56,10 @@
 </template>
 
 <script>
-export default {
+
+import app from '../api/firebase';
+import { getFunctions, httpsCallable } from "firebase/functions";
+export default{
   data() {
     return {
       valid: false,
@@ -68,6 +70,7 @@ export default {
       collegeName: "",
       courseName: "",
       yearOfStudy: "",
+      studentArray:[],
       nameRules: [
         v => !!v || "Name is required",
         v => v.length <= 20 || "Name must be less than 20 characters"
@@ -92,17 +95,32 @@ export default {
         v => !!v || "Year of study is required",
         v => /^[0-9]+$/.test(v) || "Year of study must be a number"
       ]
+
     };
   },
   methods: {
-    submit() {
-      this.$refs.form.validate();
-      if (this.valid) {
-
-        }
-      }
-    }
-}
+    postUser() {
+      const functions = getFunctions(app);
+      const postUser = httpsCallable(functions, 'postuser');
+      postUser({"name": this.name, "email": this.email, "password": this.password, "collegeName": this.collegeName, "courseName":this.courseName, "Year": this.yearOfStudy}).then((result) => {
+        this.getStudents();
+      });
+    },
+    getStudents() {
+      let loader = this.$loading.show({    // Optional parameters
+        loader: 'dots',
+        container: this.$refs.container,
+        canCancel: false
+      });
+      const functions = getFunctions(app);
+      const getStudents = httpsCallable(functions, 'getstudents');
+      getStudents().then((result) => {
+        // Read result of the Cloud Function.
+        // /** @type {any} */
+        loader.hide();
+        this.studentArray = result.data;
+      });
+}}}
 </script>
 
 <style scoped>

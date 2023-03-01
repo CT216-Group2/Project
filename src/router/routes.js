@@ -9,5 +9,6 @@ export default [
     { path: '/StudentAccount', component: loadPage('StudentAccount') },
     { path: '/OwnerAccount', component: loadPage('OwnerAccount') },
     {path: '/StudentLogin',component: loadPage('StudentLogin')},
-    {path: '/OwnerLogin',component: loadPage('OwnerLogin')}
+    {path: '/OwnerLogin',component: loadPage('OwnerLogin')},
+    {path: '/test',component: loadPage('testingPage')}
 ]
