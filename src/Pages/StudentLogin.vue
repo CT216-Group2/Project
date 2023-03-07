@@ -11,22 +11,13 @@
         <h1 style="color: black; font-size: 40px; font-family: Roboto Slab ;  " class="h2 mb-3 mt-5 fw-normal"> Accomodate.me</h1>
       </div>
       <hr style="width:50%; height: 10px; border: 5px cadetblue"/>
-
-      <input class="inputone" type="email" placeholder="Email" required autofocus >
-
-      <input class="inputone" style="margin-top: 15px; margin-bottom: 15px;" type="password" placeholder="Password">
+      <input class="inputone" v-model="email" type="email" placeholder="Email" required autofocus >
+      <input class="inputone" style="margin-top: 15px; margin-bottom: 15px;" v-model="password" type="password" placeholder="Password">
       <div class="mt-2">
         <div>Remember Me?</div>
         <div class="mt-2"><input type="checkbox"></div>
       </div>
-
-
-
-
-      <button  class="btn btn-lg btn-primary btn-block mt-5">LOG IN</button>
-
-
-
+      <button  @click="login" class="btn btn-lg btn-primary btn-block mt-5">LOG IN</button>
     </form>
   </div>
 
@@ -35,7 +26,35 @@
 
 </template>
 
-
+<script>
+import app from "../api/firebase"
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+export default {
+  name: "StudentLogin",
+  data() {
+    return {
+      email: "",
+      password: ""
+    }
+  },
+  methods: {
+    login() {
+      const auth = getAuth(app);
+      signInWithEmailAndPassword(auth, this.email, this.password).then((userCredential) => {
+// Signed in
+        let user = userCredential.user;
+        console.log(user);
+        this.$router.push({path: '/StudentAccount'})
+      }).catch((error) => {
+        let errorCode = error.code;
+        let errorMessage = error.message;
+        console.log(errorCode)
+        console.log(errorMessage)
+      });
+    }
+  }
+}
+</script>
 <style>
 input[type="checkbox"]{
   -webkit-appearance: none;

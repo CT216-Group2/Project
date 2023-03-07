@@ -48,8 +48,7 @@
               label="Year of Study"
               required
           ></v-text-field>
-
-          <v-btn color="#790404" @click="submit()" :disabled="!valid"><a class="mainColour mainFont">Sign Up<</a></v-btn>
+          <v-btn color="#790404" @click="register" :disabled="!valid"><a class="mainColour mainFont">Sign Up</a></v-btn>
         </v-form>
       </v-col>
     </v-row>
@@ -57,7 +56,12 @@
 </template>
 
 <script>
-export default {
+
+import app from '../api/firebase';
+import { getFunctions, httpsCallable } from "firebase/functions";
+import {createUserWithEmailAndPassword, getAuth} from "firebase/auth";
+export default{
+  name: "StudentSignUp",
   data() {
     return {
       valid: false,
@@ -68,6 +72,7 @@ export default {
       collegeName: "",
       courseName: "",
       yearOfStudy: "",
+      studentArray:[],
       nameRules: [
         v => !!v || "Name is required",
         v => v.length <= 20 || "Name must be less than 20 characters"
@@ -92,17 +97,36 @@ export default {
         v => !!v || "Year of study is required",
         v => /^[0-9]+$/.test(v) || "Year of study must be a number"
       ]
+
     };
   },
   methods: {
-    submit() {
-      this.$refs.form.validate();
-      if (this.valid) {
-
-        }
-      }
+    postStudent() {
+      const functions = getFunctions(app);
+      const postStudent = httpsCallable(functions, 'poststudent');
+      postStudent({"name": this.name, "email": this.email, "collegeName": this.collegeName, "courseName":this.courseName, "Year": this.yearOfStudy}).then((result) => {
+      });
+    },
+    register(){
+      const auth = getAuth(app);
+      createUserWithEmailAndPassword(auth, this.email, this.password)
+          .then((userCredential) => {
+// Signed in
+            const user = userCredential.user;
+            console.log(user)
+            this.postStudent();
+            this.$router.push({path: '/StudentAccount'})
+// ...
+          })
+          .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.log(errorCode)
+            console.log(errorMessage)
+// ..
+          });
     }
-}
+  }}
 </script>
 
 <style scoped>
