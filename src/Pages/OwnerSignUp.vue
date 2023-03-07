@@ -31,7 +31,7 @@
               required
           ></v-text-field>
 
-          <v-btn color="#790404" @click="submit" :disabled="!valid"><a class="mainFont text-white">Sign Up</a></v-btn>
+          <v-btn color="#790404" @click="register" :disabled="!valid"><a class="mainFont text-white">Sign Up</a></v-btn>
 
         </v-form>
       </v-col>
@@ -40,6 +40,10 @@
 </template>
 
 <script>
+import {getFunctions, httpsCallable} from "firebase/functions";
+import app from "@/api/firebase";
+import {createUserWithEmailAndPassword, getAuth} from "firebase/auth";
+
 export default {
   data(){
     return{
@@ -68,11 +72,30 @@ export default {
     };
   },
   methods: {
-    submit() {
-      this.$refs.form.validate();
-      if (this.valid) {
-        // send data to server
-      }
+    postOwner() {
+      const functions = getFunctions(app);
+      const postOwner = httpsCallable(functions, 'postowner');
+      postOwner({"name": this.name, "email": this.email, "area": this.area}).then((result) => {
+      });
+    },
+    register(){
+      const auth = getAuth(app);
+      createUserWithEmailAndPassword(auth, this.email, this.password)
+          .then((userCredential) => {
+// Signed in
+            const user = userCredential.user;
+            console.log(user)
+            this.postOwner();
+            this.$router.push({path: '/OwnerAccount'})
+// ...
+          })
+          .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.log(errorCode)
+            console.log(errorMessage)
+// ..
+          });
     }
   }
 };

@@ -48,7 +48,7 @@
               label="Year of Study"
               required
           ></v-text-field>
-          <v-btn color="#790404" @click="submit()" :disabled="!valid"><a class="mainColour mainFont">Sign Up</a></v-btn>
+          <v-btn color="#790404" @click="register" :disabled="!valid"><a class="mainColour mainFont">Sign Up</a></v-btn>
         </v-form>
       </v-col>
     </v-row>
@@ -59,7 +59,9 @@
 
 import app from '../api/firebase';
 import { getFunctions, httpsCallable } from "firebase/functions";
+import {createUserWithEmailAndPassword, getAuth} from "firebase/auth";
 export default{
+  name: "StudentSignUp",
   data() {
     return {
       valid: false,
@@ -99,28 +101,32 @@ export default{
     };
   },
   methods: {
-    postUser() {
+    postStudent() {
       const functions = getFunctions(app);
-      const postUser = httpsCallable(functions, 'postuser');
-      postUser({"name": this.name, "email": this.email, "password": this.password, "collegeName": this.collegeName, "courseName":this.courseName, "Year": this.yearOfStudy}).then((result) => {
-        this.getStudents();
+      const postStudent = httpsCallable(functions, 'poststudent');
+      postStudent({"name": this.name, "email": this.email, "collegeName": this.collegeName, "courseName":this.courseName, "Year": this.yearOfStudy}).then((result) => {
       });
     },
-    getStudents() {
-      let loader = this.$loading.show({    // Optional parameters
-        loader: 'dots',
-        container: this.$refs.container,
-        canCancel: false
-      });
-      const functions = getFunctions(app);
-      const getStudents = httpsCallable(functions, 'getstudents');
-      getStudents().then((result) => {
-        // Read result of the Cloud Function.
-        // /** @type {any} */
-        loader.hide();
-        this.studentArray = result.data;
-      });
-}}}
+    register(){
+      const auth = getAuth(app);
+      createUserWithEmailAndPassword(auth, this.email, this.password)
+          .then((userCredential) => {
+// Signed in
+            const user = userCredential.user;
+            console.log(user)
+            this.postStudent();
+            this.$router.push({path: '/StudentAccount'})
+// ...
+          })
+          .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.log(errorCode)
+            console.log(errorMessage)
+// ..
+          });
+    }
+  }}
 </script>
 
 <style scoped>

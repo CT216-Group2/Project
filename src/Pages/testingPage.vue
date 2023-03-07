@@ -1,6 +1,10 @@
 <template>
   <h1>Welcome to my new Blog page</h1>
   <p>This is my very first blog entry</p>
+  <div>
+    <input type="file" id="photo" />
+    <button id="upload" onclick="uploadImage()">Upload Image</button>
+  </div>
   <div class="container">
     <div class="mb-3">
       <label for="exampleFormControlInput1" class="form-label">Email address</label>
@@ -25,9 +29,10 @@
       </ul>
     </div>
   </div>
+
 </template>
 <script>
-
+import firebase from '../api/firebase';
 import app from '../api/firebase';
 import { getFunctions, httpsCallable } from "firebase/functions";
 export default {
@@ -67,9 +72,34 @@ export default {
     }
   }
 }
+console.log(firebase);
+function uploadImage() {
+  const ref = firebase.storage().ref();
+  const file = document.querySelector("#photo").files[0];
+  const name = +new Date() + "-" + file.name;
+  const metadata = {
+    contentType: file.type
+  };
+  const task = ref.child(name).put(file, metadata);task
+      .then(snapshot => snapshot.ref.getDownloadURL())
+      .then(url => {
+        console.log(url);
+        alert('image uploaded successfully');
+        document.querySelector("#image").src = url;
+      })
+      .catch(console.error);
+}
 </script>
 <style scoped>
 .right{
   text-align: right;
+}
+#photo{
+  margin-top: 200px;
+  margin-left: 450px;
+}
+#upload{
+  margin-top: 20px;
+  margin-left: 450px;
 }
 </style>

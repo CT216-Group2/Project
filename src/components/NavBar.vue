@@ -19,10 +19,10 @@
                 Account
               </a>
               <ul class="dropdown-menu">
-                <li><a class="dropdown-item mainFont"><router-link to="/OwnerAccount" class="black">Profile</router-link> </a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item mainFont"><router-link to="/Login" class="black">Login</router-link></a></li>
-                <li><a class="dropdown-item mainFont"><router-link to="/OwnerSignUp" class="black">Sign up</router-link> </a></li>
+                <li v-if="isLoggedIn"><a class="dropdown-item mainFont"><router-link to="/OwnerAccount" class="black">Profile</router-link> </a></li>
+                <li v-if="!isLoggedIn"><a class="dropdown-item mainFont"><router-link to="/Login" class="black">Login</router-link></a></li>
+                <li v-if="!isLoggedIn"><a class="dropdown-item mainFont"><router-link to="/OwnerSignUp" class="black">Sign up</router-link> </a></li>
+                <li><a class="dropdown-item mainFont">><router-link @click="logout" to="/">Logout</router-link></a></li>
               </ul>
             </li>
           </ul>
@@ -33,9 +33,57 @@
 </template>
 
 <script>
-export default {
-  name: "navBar"
+import app from "../api/firebase"
+  ;
+import
+{getAuth, onAuthStateChanged, signOut} from "firebase/auth"
+  ;
+export default
+{
+  name: "Navigation"
+  ,
+  data() {
+    return
+    {
+      isLoggedIn : false
+    }
+  }
+  ,
+  created (){
+// Check if the user is logged in
+    const auth = getAuth
+        (app
+        )
+    ;
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        console
+            .log(user)
+        ;
+        this.isLoggedIn = true;
+      } else
+      {
+        this.isLoggedIn = false;
+      }
+    })
+    ;
+  }
+  ,
+  methods : {
+    logout(){
+      signOut
+      (getAuth
+      (app)).then(() => {
+// Send them back to the home page!
+        this.$router.push("/"
+        )
+        ;
+      })
+      ;
+    }
+  }
 }
+
 </script>
 
 <style scoped>

@@ -35,7 +35,7 @@ cors(request, response, () => {
 });
 });
 
-exports.postuser = functions.https.onRequest((request, response) => {
+exports.poststudent = functions.https.onRequest((request, response) => {
 // 1. Receive comment data in here from user POST request
 // 2. Connect to our Firestore database
     cors(request, response, () => {
@@ -49,6 +49,19 @@ exports.postuser = functions.https.onRequest((request, response) => {
     });
 });
 
+exports.postowner = functions.https.onRequest((request, response) => {
+// 1. Receive comment data in here from user POST request
+// 2. Connect to our Firestore database
+    cors(request, response, () => {
+        const currentTime = admin.firestore.Timestamp.now();
+        request.body.data.timestamp = currentTime;
+
+
+        return admin.firestore().collection('Landlord').add(request.body).then(() => {
+            response.json({data: "Saved in the database"});
+        });
+    });
+});
 exports.getstudents = functions.https.onRequest((request, response) => {
 
     cors(request, response, () => {
@@ -106,9 +119,24 @@ exports.deletecomment = functions.https.onRequest((request, response) => {
     cors(request, response, () => {
         // deletes a comment using the id of the document
         console.log(request.query.id);
-        admin.firestore().collection("Student").doc(request.query.id).delete().then(() => {
+        admin.firestore().collection("comments").doc(request.query.id).delete().then(() => {
             response.json({data: "Document successfully deleted"});
         })
     });
 });
+
+exports.securefunction =
+    functions.https.onCall((data, context) => {
+// context.auth contains information about the user, if they are logged in etc.
+        if(typeof context.auth === undefined)
+        {
+// request is made from user that is logged in
+            return "User is logged in"
+        }
+    else
+        {
+            return "User is not Logged in"
+        }
+    });
+
 
