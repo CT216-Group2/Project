@@ -16,8 +16,8 @@ function isAuth(to, from, next){
 // ...
         } else {
 // User is signed out
-// Send them back to the home page or maybe the login
-            page
+// Send them back to the home page or maybe the login page
+
             return next({path : '/'});
         }
     });
@@ -31,4 +31,5 @@ export default [
     { path: '/OwnerAccount', component: loadPage('OwnerAccount'),beforeEnter: isAuth },
     {path: '/StudentLogin',component: loadPage('StudentLogin')},
     {path: '/OwnerLogin',component: loadPage('OwnerLogin')},
+    {path: '/About',component: loadPage('About')},
 ]
