@@ -12,7 +12,7 @@
               <a class="nav-link active mainFont" aria-current="page"><router-link to="/" class="router-link">Home</router-link></a>
             </li>
             <li class="nav-item">
-              <a class="nav-link mainFont" href="#">About</a>
+              <a class="nav-link mainFont" href="#"><router-link to="/about" class="router-link">About</router-link></a>
             </li>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle mainFont" href="#"  data-bs-toggle="dropdown" aria-expanded="false">
