@@ -29,6 +29,8 @@
 <script>
 import app from "../api/firebase"
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { getFirestore, doc, getDocs } from "https://www.gstatic.com/firebasejs/9.8.4/firebase-firestore.js";
+const db = app.firestore();
 export default {
   name: "StudentLogin",
   data() {
@@ -38,9 +40,24 @@ export default {
     }
   },
   methods: {
+    
+
+    async getEmails(){
+      
+const colRef = collection(db, "students");
+const docsSnap = await getDocs(colRef);
+
+docsSnap.forEach(doc => {
+  console.log(doc.data());
+})
+
+    }},
+
+
     login() {
-      const auth = getAuth(app);
+      const auth  = getAuth(app);
       signInWithEmailAndPassword(auth, this.email, this.password).then((userCredential) => {
+        this.getEmails();
 // Signed in
         let user = userCredential.user;
         console.log(user);
@@ -53,7 +70,7 @@ export default {
       });
     }
   }
-}
+
 </script>
 <style>
 input[type="checkbox"]{

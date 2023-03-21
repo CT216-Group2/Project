@@ -16,8 +16,7 @@ function isAuth(to, from, next){
 // ...
         } else {
 // User is signed out
-// Send them back to the home page or maybe the login
-            page
+// Send them back to the home page or maybe the login page
             return next({path : '/'});
         }
     });
