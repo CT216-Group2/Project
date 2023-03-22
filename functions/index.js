@@ -140,6 +140,7 @@ exports.securefunction =
         }
     });
 
+
 exports.getemails = functions.https.onRequest((request, response) => {
 
     cors(request, response, () => {
@@ -172,5 +173,66 @@ exports.getemails = functions.https.onRequest((request, response) => {
 
 
 
+
+    
+
+exports.create = functions.https.onRequest((request, response) => {
+// 1. Receive comment data in here from user POST request
+// 2. Connect to our Firestore database
+    cors(request, response, () => {
+        const currentTime = admin.firestore.Timestamp.now();
+        request.body.data.timestamp = currentTime;
+
+
+        return admin.firestore().collection('Groups').add(request.body).then(() => {
+            response.json({data: "Saved in the database"});
+        });
+    });
+});
+
+
+exports.getgroups = functions.https.onRequest((request, response) => {
+
+    cors(request, response, () => {
+        // 1. Connect to our Firestore database
+        console.log("The request made it in here");
+        let myData = [];
+        return admin.firestore().collection('Groups').orderBy('data.timestamp').get().then((snapshot) => {
+
+            if (snapshot.empty) {
+                console.log('No matching documents.');
+                response.json({data: {message : 'No data in database'}});
+                return;
+            }
+
+            snapshot.forEach(doc => {
+                console.log(doc.id);
+                myData.push(Object.assign(doc.data(), {id:doc.id}));
+            });
+            console.log(myData);
+
+            // 2. Send data back to client
+            response.json({data: myData});
+        });
+    });
+});
+
+exports.joingroup = functions.https.onRequest((request, response) => {
+    cors(request, response, () => {
+        console.log("This is the body" + request.body.data);
+        return admin.firestore().collection('Groups').doc(request.query.id).update(request.body.data.members).then(() => {
+            response.json({data: "Updated document in database"});
+        });
+    });
+});
+
+exports.leavegroup = functions.https.onRequest((request, response) => {
+    cors(request, response, () => {
+        console.log("This is the body" + request.body.data);
+        return admin.firestore().collection('Groups').doc(request.query.id).delete(request.body.data.members).then(() => {
+            response.json({data: "Updated document in database"});
+        });
+    });
+});
 
     
