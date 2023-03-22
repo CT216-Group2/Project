@@ -17,7 +17,7 @@
         <div>Remember Me?</div>
         <div class="mt-2"><input type="checkbox"></div>
       </div>
-      <button  @click="login" class="btn btn-lg btn-primary btn-block mt-5">LOG IN</button>
+      <button  @click.prevent="login()" class="btn btn-lg btn-primary btn-block mt-5">LOG IN</button>
     </form>
   </div>
 
@@ -29,47 +29,67 @@
 <script>
 import app from "../api/firebase"
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import { getFirestore, doc, getDocs } from "https://www.gstatic.com/firebasejs/9.8.4/firebase-firestore.js";
-const db = app.firestore();
+import { getFunctions, httpsCallable } from "@firebase/functions";
+
 export default {
   name: "StudentLogin",
   data() {
     return {
       email: "",
-      password: ""
+      password: "",
+      emailsArray:[]
     }
   },
   methods: {
     
 
     async getEmails(){
-      
-const colRef = collection(db, "students");
-const docsSnap = await getDocs(colRef);
+      const functions = getFunctions(app);
+      const getEmails = httpsCallable(functions, 'getemails');
+      getEmails().then((result) => {
+        console.log(result.data);
+        this.emailsArray = result.data;
+      })
 
-docsSnap.forEach(doc => {
-  console.log(doc.data());
-})
-
-    }},
+    },
 
 
     login() {
-      const auth  = getAuth(app);
-      signInWithEmailAndPassword(auth, this.email, this.password).then((userCredential) => {
-        this.getEmails();
-// Signed in
-        let user = userCredential.user;
-        console.log(user);
-        this.$router.push({path: '/StudentAccount'})
-      }).catch((error) => {
-        let errorCode = error.code;
-        let errorMessage = error.message;
-        console.log(errorCode)
-        console.log(errorMessage)
-      });
+      const auth = getAuth(app);
+      console.log("test");
+      signInWithEmailAndPassword(auth, this.email, this.password)
+        .then((userCredential) => {
+          this.getEmails();
+          for (let i = 0; i < this.emailsArray.length; i++) {
+            if (this.email === this.emailsArray[i]) {
+              let user = userCredential.user;
+              console.log(user);
+              this.$router.push({ path: "/StudentAccount" });
+              console.log(this.emailsArray);
+            } else {
+              console.log("Student email not found");
+            }
+          }
+        })
+        .catch((error) => {
+          let errorCode = error.code;
+          let errorMessage = error.message;
+          console.log(errorCode);
+          console.log(errorMessage);
+        });
     }
   }
+};
+    
+  
+          
+
+          
+        
+        
+        
+// Signed in
+      
 
 </script>
 <style>

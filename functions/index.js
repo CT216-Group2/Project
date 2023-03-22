@@ -1,7 +1,8 @@
 const functions = require("firebase-functions");
 const admin = require('firebase-admin');
-const cors = require('cors')({origin:true});
+const cors = require('cors')({origin: true});
 admin.initializeApp();
+
 
 // // Create and Deploy Your First Cloud Functions
 // // https://firebase.google.com/docs/functions/write-firebase-functions
@@ -139,4 +140,37 @@ exports.securefunction =
         }
     });
 
+exports.getemails = functions.https.onRequest((request, response) => {
 
+    cors(request, response, () => {
+            // 1. Connect to our Firestore database
+
+
+
+            console.log("The request made it in here");
+            let myData = [];
+            return admin.firestore().collection('Student').get().then((snapshot) => {
+    
+                if (snapshot.empty) {
+                    console.log('No matching documents.');
+                    response.json({data: {message : 'No data in database'}});
+                    return;
+                }
+    
+                snapshot.forEach(doc => {
+                    console.log(doc.id);
+                    myData.push(doc.data.email);
+                });
+                console.log(myData);
+    
+                // 2. Send data back to client
+                response.json({data: myData});
+            });
+        });
+    });
+
+
+
+
+
+    

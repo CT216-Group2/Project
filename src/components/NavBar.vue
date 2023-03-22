@@ -20,7 +20,7 @@
               </a>
               <ul class="dropdown-menu">
                 <li v-if="isLoggedIn"><a class="dropdown-item mainFont"><router-link to="/OwnerAccount" class="black">Profile</router-link> </a></li>
-                <li v-if="!isLoggedIn"><a class="dropdown-item mainFont"><router-link to="/Login" class="black">Login</router-link></a></li>
+                <li v-if="!isLoggedIn"><a class="dropdown-item mainFont"><router-link to="/StudentLogin" class="black">Login</router-link></a></li>
                 <li v-if="!isLoggedIn"><a class="dropdown-item mainFont"><router-link to="/OwnerSignUp" class="black">Sign up</router-link> </a></li>
                 <li><a class="dropdown-item mainFont">><router-link @click="logout" to="/">Logout</router-link></a></li>
               </ul>
@@ -33,53 +33,36 @@
 </template>
 
 <script>
-import app from "../api/firebase"
-  ;
+import app from "../api/firebase";
 import
-{getAuth, onAuthStateChanged, signOut} from "firebase/auth"
-  ;
+{getAuth, onAuthStateChanged, signOut} from "firebase/auth";
 export default
 {
-  name: "Navigation"
-  ,
+  name: "Navigation",
   data() {
-    return
-    {
+    return{
       isLoggedIn : false
     }
-  }
-  ,
+  },
   created (){
 // Check if the user is logged in
-    const auth = getAuth
-        (app
-        )
-    ;
+    const auth = getAuth(app);
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        console
-            .log(user)
-        ;
+        console.log(user);
         this.isLoggedIn = true;
       } else
       {
         this.isLoggedIn = false;
       }
-    })
-    ;
-  }
-  ,
+    });
+  },
   methods : {
     logout(){
-      signOut
-      (getAuth
-      (app)).then(() => {
+      signOut(getAuth(app)).then(() => {
 // Send them back to the home page!
-        this.$router.push("/"
-        )
-        ;
-      })
-      ;
+        this.$router.push("/" );
+      });
     }
   }
 }

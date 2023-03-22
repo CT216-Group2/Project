@@ -15,12 +15,7 @@ function isAuth(to, from, next){
             return next();
 // ...
         } else {
-// User is signed out
-// Send them back to the home page or maybe the login page
-<<<<<<< HEAD
-=======
-
->>>>>>> 04539331d0fd83c0064bfcefc563f0a198844743
+// User is signed out and send them back to the home page or maybe the login page
             return next({path : '/'});
         }
     });
