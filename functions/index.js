@@ -7,6 +7,92 @@ admin.initializeApp();
 // // Create and Deploy Your First Cloud Functions
 // // https://firebase.google.com/docs/functions/write-firebase-functions
 //
+exports.addLikes = functions.https.onRequest((request, response) => {
+    cors(request, response, () => {
+        const studentGroupQuery = admin.firestore().collection('StudentGroup').where('member', '==', request.body.data.user);
+        return studentGroupQuery.get().then((querySnapshot) => {
+            if (querySnapshot.empty) {
+                response.status(404).send(`StudentGroup not found for user ${request.body.data.user}`);
+            } else {
+                const groupId = querySnapshot.docs[0].data().groupId;
+                const houseId = request.body.data.houseId;
+                const houseRef = admin.firestore().collection('House').doc(houseId);
+
+                // Update the house document to add the group ID to the Likes array
+                return houseRef.update({
+                    'data.Likes': admin.firestore.FieldValue.arrayUnion(groupId)
+                }).then(() => {
+                    // Add the group ID and house ID to the GroupLikes collection
+                    const groupLikesRef = admin.firestore().collection('GroupLikes').doc(`${groupId}_${houseId}`);
+                    return groupLikesRef.set({
+                        groupId: groupId,
+                        houseId: houseId
+                    }).then(() => {
+                        response.json({data: "Updated Document in Database"});
+                    });
+                });
+            }
+        }).catch((error) => {
+            response.status(500).send(error);
+        });
+    });
+});
+
+
+
+exports.getHouse = functions.https.onRequest((request, response) => {
+
+    cors(request, response, () => {
+        // 1. Connect to our Firestore database
+        console.log("The request made it in here");
+        let myData = [];
+        return admin.firestore().collection('House').get().then((snapshot) => {
+
+            if (snapshot.empty) {
+                console.log('No matching documents.');
+                response.json({data: {message : 'No data in database'}});
+                return;
+            }
+
+            snapshot.forEach(doc => {
+                console.log(doc.id);
+                myData.push(Object.assign(doc.data(), {id:doc.id}));
+            });
+            console.log(myData);
+
+            // 2. Send data back to client
+            response.json({data: myData});
+        });
+    });
+});
+
+
+exports.getImage = functions.https.onRequest((request, response) => {
+
+    cors(request, response, () => {
+        // 1. Connect to our Firestore database
+        console.log("The request made it in here");
+        let myData = [];
+        return admin.firestore().collection('House.image').get().then((snapshot) => {
+
+            if (snapshot.empty) {
+                console.log('No matching documents.');
+                response.json({data: {message: 'No data in database'}});
+                return;
+            }
+
+            snapshot.forEach(doc => {
+                console.log(doc.id);
+                myData.push(Object.assign(doc.data(), {id: doc.id}));
+            });
+            console.log(myData);
+
+            // 2. Send data back to client
+            response.json({data: myData});
+        });
+    });
+});
+
 exports.helloWorld = functions.https.onRequest((request, response) => {
     functions.logger.info("Hello logs!", {structuredData: true});
     response.send("Hello from Firebase again!");

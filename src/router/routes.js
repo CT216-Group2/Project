@@ -33,5 +33,6 @@ export default [
     {path: '/StudentLogin',component: loadPage('StudentLogin')},
     {path: '/OwnerLogin',component: loadPage('OwnerLogin')},
     {path: '/About',component: loadPage('About')},
-    {path:'/Groups',component: loadPage('Groups')}
+    {path:'/Groups',component: loadPage('Groups')},
+    {path:'/search',component: loadPage('Search')}
 ]
