@@ -17,7 +17,7 @@
         <div>Remember Me?</div>
         <div class="mt-2"><input type="checkbox"></div>
       </div>
-      <button  @click="login" class="btn btn-lg btn-primary btn-block mt-5">LOG IN</button>
+      <button  @click.prevent="login()" class="btn btn-lg btn-primary btn-block mt-5">LOG IN</button>
     </form>
   </div>
 
@@ -29,6 +29,7 @@
 <script>
 import app from "../api/firebase"
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import {getFunctions, httpsCallable} from "firebase/functions";
 export default {
   name: "StudentLogin",
   data() {
@@ -44,12 +45,24 @@ export default {
 // Signed in
         let user = userCredential.user;
         console.log(user);
-        this.$router.push({path: '/StudentAccount'})
+        this.checkEmail();
       }).catch((error) => {
         let errorCode = error.code;
         let errorMessage = error.message;
         console.log(errorCode)
         console.log(errorMessage)
+      });
+    },
+    checkEmail(){
+      const functions = getFunctions(app);
+      const checkEmail = httpsCallable(functions, 'checkEmail');
+      checkEmail().then((result) => {
+        console.log(result.data);
+        if(result.data.includes(this.email)){
+          this.$router.push({path: '/StudentAccount'});
+        }else{
+          console.log("Wrong Login Page");
+        }
       });
     }
   }

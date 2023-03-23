@@ -23,7 +23,7 @@
 
 
 
-      <button  class="btn btn-lg btn-primary btn-block mt-5" @click="login">LOG IN</button>
+      <button  class="btn btn-lg btn-primary btn-block mt-5" @click.prevent="login()">LOG IN</button>
 
 
 
@@ -38,6 +38,7 @@
 <script>
 import app from "../api/firebase"
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import {getFunctions, httpsCallable} from "firebase/functions";
 export default {
   name: "OwnerLogin",
   data() {
@@ -53,15 +54,27 @@ export default {
 // Signed in
         let user = userCredential.user;
         console.log(user);
-        this.$router.push({path: '/OwnerAccount'})
+        this.checkEmail();
       }).catch((error) => {
         let errorCode = error.code;
         let errorMessage = error.message;
         console.log(errorCode)
         console.log(errorMessage)
       });
+    },
+    checkEmail(){
+      const functions = getFunctions(app);
+      const checkEmail = httpsCallable(functions, 'checkEmail');
+      checkEmail().then((result) => {
+        console.log(result.data);
+        if(result.data.includes(this.email)){
+          console.log("Wrong Login Page");
+        }else{
+          this.$router.push({path: '/OwnerAccount'});
+        }
+      });
     }
-  }
+}
 }
 </script>
 
