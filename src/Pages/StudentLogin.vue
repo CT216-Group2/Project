@@ -43,7 +43,7 @@ export default {
   methods: {
     
 
-    async getEmails(){
+    getEmails(){
       const functions = getFunctions(app);
       const getEmails = httpsCallable(functions, 'getemails');
       getEmails().then((result) => {

@@ -3,158 +3,119 @@
   <link rel="stylesheet" href="src/assets/bootstrap-grid.css">
   <link rel="stylesheet" href="src/assets/bootstrap-reboot.css">
 
-
-  <div class="container">
-    <div class="posts">
-        <div class="title mainFont">Your Matches</div>
-      <div class="col-sm" >
-        <div class="card" style="width: 18rem;">
-          <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fdownloadhdwallpapers.in%2Fwp-content%2Fuploads%2F2018%2F01%2FLuxury-Home-at-Night-1920x1200.jpg&f=1&nofb=1&ipt=c79a61f27097d9ee5784a87ae265dca2ee3d1207638bba8b19798f78b0b4b70c&ipo=images" class="card-img-top" alt="...">
-          <div class="card-body">
-            <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut </p>
-            <a href="/" target="_blank" style="#0f8fef : white">See More</a>
-          </div>
-
-        </div>
-      </div>
-      <div class="col-sm">
-        <div class="card" style="width: 18rem;">
-          <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fdownloadhdwallpapers.in%2Fwp-content%2Fuploads%2F2018%2F01%2FLuxury-Home-at-Night-1920x1200.jpg&f=1&nofb=1&ipt=c79a61f27097d9ee5784a87ae265dca2ee3d1207638bba8b19798f78b0b4b70c&ipo=images" class="card-img-top" alt="...">
-          <div class="card-body">
-            <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut </p>
-            <a href="/" target="_blank" style="#0f8fef: white">See More</a>
-          </div>
-
-        </div>
-      </div>
-      <div class="col-sm">
-        <div class="card" style="width: 18rem;">
-          <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fdownloadhdwallpapers.in%2Fwp-content%2Fuploads%2F2018%2F01%2FLuxury-Home-at-Night-1920x1200.jpg&f=1&nofb=1&ipt=c79a61f27097d9ee5784a87ae265dca2ee3d1207638bba8b19798f78b0b4b70c&ipo=images" class="card-img-top" alt="...">
-          <div class="card-body" >
-            <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut </p>
-            <a href="/" target="_blank" style="#0f8fef : white">See More</a>
-          </div>
-
-        </div>
-      </div>
-    </div>
-
-
-
-    <div class="messages">
-
-      <div class="row-cols-1">
-
-        <div class="col-sm-2">
-          <div class="message-card">
-            <div class="message-card-body">
-              <h5 class="card-title">Person Name</h5>
-              <h6 class="card-subtitle" style="font-size: 1em;">07/02/2023</h6>
-              <a href="#" class="card-link" style="color: white">Reply</a>
-              <a href="#" class="card-link" style="color: white">Block</a>
+  <div v-if="likedHouseArray.length > 0">
+    <ul>
+      <li v-for="(House , index)  in likedHouseArray" :key = "index">
+        <div class="dispDiv" >
+          <span>
+            <div class="card"  style="width: 18rem;">
+            <div :id="'carousel'+index" class="carousel slide">
+            <div class="carousel-inner">
+            <div class="carousel-item active">
+              <img v-bind:src="House.data.image" class="d-block w-100" alt="...">
             </div>
-          </div>
-        </div>
-        <div class="col-sm-2">
-          <div class="message-card">
-            <div class="message-card-body">
-              <h5 class="card-title">Person Name</h5>
-              <h6 class="card-subtitle" style="font-size: 1em;">07/02/2023</h6>
-              <a href="#" class="card-link" style="color: white">Reply</a>
-              <a href="#" class="card-link" style="color: white">Block</a>
+            <div class="carousel-item">
+              <img v-bind:src="House.data.image" class="d-block w-100" alt="...">
             </div>
-          </div>
-        </div>
-        <div class="col-sm-2">
-          <div class="message-card">
-            <div class="message-card-body">
-              <h5 class="card-title">Person Name</h5>
-              <h6 class="card-subtitle" style="font-size: 1em;">07/02/2023</h6>
-              <a href="#" class="card-link" style="color: white">Reply</a>
-              <a href="#" class="card-link" style="color: white">Block</a>
+            <div class="carousel-item">
+              <img v-bind:src="House.data.image" class="d-block w-100" alt="...">
             </div>
-          </div>
-        </div>
-        <div class="col-sm-2">
-          <div class="message-card">
-            <div class="message-card-body">
-              <h5 class="card-title">Person Name</h5>
-              <h6 class="card-subtitle" style="font-size: 1em;">07/02/2023</h6>
-              <a href="#" class="card-link" style="color: white">Reply</a>
-              <a href="#" class="card-link" style="color: white">Block</a>
             </div>
-          </div>
+              <button class="carousel-control-prev" type="button" :data-bs-target="'#carousel'+index" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+              </button>
+                <button class="carousel-control-next" type="button" :data-bs-target="'#carousel'+index" data-bs-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+              <div class="card-body">
+               <h5 class="card-title">Card title</h5>
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+              </div>
+            </div>
+          </span>
         </div>
-      </div>
-    </div>
+      </li>
+    </ul>
   </div>
+
+        
+  
+
+
 
 
 </template>
 
 <script>
+
+import { getFunctions, httpsCallable } from '@firebase/functions';
+import app from "@/api/firebase";
+import {getAuth, onAuthStateChanged} from "firebase/auth";
+
 export default {
-  name: "Account.vue"
-}
+  data(){
+    return{
+      handle: "",
+      user: null,
+      likedHouseArray:[],
+    }
+  },
+
+  created() {
+
+    // Check for logged in user
+    const auth = getAuth(app);
+    onAuthStateChanged(auth, (user) => {
+
+      if (user) {
+        console.log("User", user);
+        this.user = user;
+        this.handle = user.email;
+        // User is signed in
+      } else {
+        console.log("No user found")
+        // User is not signed in
+      }
+    });
+    console.log("HERE//");
+    this.getGroupLikes();
+  },
+
+  methods: {
+
+    getGroupLikes(){
+      const functions = getFunctions(app);
+      const getGroupLikes = httpsCallable(functions, "getgrouplikes");
+      getGroupLikes({user: this.handle}).then((result) => {
+        console.log(result.data);
+        this.getHouses(result.data);
+
+      })
+    },
+
+    getHouses(houseIds){
+      const functions = getFunctions(app);
+      const getHouses = httpsCallable(functions, "getlikedhouses");
+      getHouses().then((result) => {
+        console.log(result.data);
+        const filteredHouses = result.data.filter(house => houseIds.includes(house.id));
+        console.log(filteredHouses);
+        this.likedHouseArray = filteredHouses;
+      })
+    },
+
+    
+
+  }
+};
+
+
+
+
 </script>
 <style scoped>
-.container{
-  margin-left: 0%;
-  position: relative;
-  height: 65vh;
-  width: 100vw;
-}
-.posts{
-  padding: 0%;
-  position: relative;
-}
-.messages{
-  position: relative;
-}
-.card{
-  height: fit-content;
-  background-color:#790404;
-  padding: 0%;
-  margin: 1%;
-}
-.card-img-top{
-  border-radius: 5%;
-  padding:2%;
-}
-.title{
-  margin: auto;
-  padding-left: 5vw;
-  margin-top: 0px;
-  padding-top: 0px;
-  font-weight: bold;
-  font-size: 2em;
-}
-.title2{
-  font-size: 2em;
-}
-.card-title{
-  color: white;
-}
-.card-subtitle{
-  color: #0f8fef ;
-}
-.card-text{
-  color: white;
-}
-.message-card{
-  font-size:.8em;
-  margin: 2%;
-  background-color: #790404;
-  border-radius: 4%;
-  border: solid;
-}
-.col-sm{
-  width: fit-content;
-  display: inline;
-  float: left;
-}
-.col-sm-2{
-  display: inline;
-  float: right;
-}
+
 </style>

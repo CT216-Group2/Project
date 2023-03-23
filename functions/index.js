@@ -160,7 +160,8 @@ exports.getemails = functions.https.onRequest((request, response) => {
     
                 snapshot.forEach(doc => {
                     console.log(doc.id);
-                    myData.push(doc.data.email);
+                    const email = doc.data().data.email;
+                    myData.push(email);
                 });
                 console.log(myData);
     
@@ -235,4 +236,158 @@ exports.leavegroup = functions.https.onRequest((request, response) => {
     });
 });
 
+exports.getlikes = functions.https.onRequest((request, response) => {
+
+    cors(request, response, () => {
+        // 1. Connect to our Firestore database
+        console.log("The request made it in here");
+        let myData = [];
+        return admin.firestore().collection('Student').get().then((snapshot) => {
+
+            if (snapshot.empty) {
+                console.log('No matching documents.');
+                response.json({data: {message : 'No data in database'}});
+                return;
+            }
+
+            snapshot.forEach(doc => {
+                console.log(doc.id);
+                const likedArray = doc.data().Liked;
+                if (likedArray && likedArray.length > 0) {
+                    likedArray.forEach(email => {
+                        myData.push(email);
+                    });
+                }
+            });
+            console.log(myData);
+
+            // 2. Send data back to client
+            response.json({data: myData});
+        });
+    });
+});
+
+exports.getgroupmembers = functions.https.onRequest((request, response) => {
+
+    cors(request, response, () => {
+            // 1. Connect to our Firestore database
+
+
+
+            console.log("The request made it in here");
+            let myData = [];
+            return admin.firestore().collection('Groups').get().then((snapshot) => {
+    
+                if (snapshot.empty) {
+                    console.log('No matching documents.');
+                    response.json({data: {message : 'No data in database'}});
+                    return;
+                }
+    
+                snapshot.forEach(doc => {
+                    console.log(doc.id);
+                    myData.push(doc.data.members);
+                });
+                console.log(myData);
+    
+                // 2. Send data back to client
+                response.json({data: myData});
+            });
+        });
+    });
+
+
+exports.getemailoflikes = functions.https.onRequest((request, response) => {
+
+    cors(request, response, () => {
+        // 1. Connect to our Firestore database
+        console.log("The request made it in here");
+        let myData = [];
+        return admin.firestore().collection('Student').get().then((snapshot) => {
+
+            if (snapshot.empty) {
+                console.log('No matching documents.');
+                response.json({data: {message : 'No data in database'}});
+                return;
+            }
+
+            snapshot.forEach(doc => {
+                console.log(doc.id);
+                const likedArray = doc.data().Liked;
+                const email = doc.data().email;
+                if (likedArray && likedArray.length > 0) {
+                    myData.push(email);
+                }
+            });
+            console.log(myData);
+
+            // 2. Send data back to client
+            response.json({data: myData});
+        });
+    });
+});
+
+
+exports.getgrouplikes = functions.https.onRequest((request, response) => {
+
+    cors(request, response, () => {
+        // 1. Connect to our Firestore database
+        console.log("The request made it in here");
+        let myData = [];
+        const studentGroupQuery = admin.firestore().collection('StudentGroup').where('member', '==', request.body.data.user);
+        return studentGroupQuery.get().then((querySnapshot) => {
+            if(querySnapshot.empty){
+                response.status(404).send('Student Group not found for user ${request.body.data.user}');
+            } else{
+                const groupId = querySnapshot.docs[0].data().groupId;
+                const groupLikesQuery = admin.firestore.collection('GroupLikes').where('groupId', '==', groupId);
+
+                return groupLikesQuery.get().then((querySnapshot) => {
+                    if(querySnapshot.empty){
+                        response.status(404).send('Group ID not found for user ${request.body.data.user}');
+                        response.json({data:{message: 'No data in database'}});
+                        return;
+                    } 
+                    snapshot.forEach(doc => {
+                        console.log(doc.id);
+                        myData.push(doc.houseId);
+                    });
+
+                console.log(myData);
+
+                response.json({data: myData});
+
+                })
+            }
+        })
+
+        
+    });
+});
+
+exports.getlikedhouses = functions.https.onRequest((request, response) => {
+
+    cors(request, response, () => {
+        // 1. Connect to our Firestore database
+        console.log("The request made it in here");
+        let myData = [];
+        return admin.firestore().collection('House').get().then((snapshot) => {
+
+            if (snapshot.empty) {
+                console.log('No matching documents.');
+                response.json({data: {message : 'No data in database'}});
+                return;
+            }
+
+            snapshot.forEach(doc => {
+                console.log(doc.id);
+                myData.push(Object.assign(doc.data(), {id:doc.id}));
+            });
+            console.log(myData);
+
+            // 2. Send data back to client
+            response.json({data: myData});
+        });
+    });
+});
     

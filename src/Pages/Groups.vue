@@ -49,6 +49,8 @@ export default {
       area: "",
       size: "",
       groupsArray:[],
+      likedEmailsArray:[],
+      groupMembers:[],
       handle:"",
       user: null
     }
@@ -69,6 +71,8 @@ export default {
       }
     });
     this.getGroups();
+    this.getGroupMembers();
+    this.displayGroupLikes();
   },
   methods: {
     show(id) {
@@ -85,6 +89,10 @@ export default {
       this.getGroups();
       });
     },
+
+    
+
+
     getGroups() {
 
       const functions = getFunctions(app);
@@ -93,7 +101,31 @@ export default {
         console.log(result.data);
         this.groupsArray = result.data;
       });
+      
     },
+
+    /*getGroupMembers(){
+      this.getGroups().then((result) => {
+    // Filter data to store only group members in a new array
+    this.groupMembers = result.data.map((group) => {
+       this.groupMembers = group;
+    });
+    });
+
+    console.log(groupMembers);
+  },*/
+
+  getGroupMembers() {
+
+    const functions = getFunctions(app);
+    const getGroupMembers = httpsCallable(functions, 'getgroupmembers');
+    getGroupMembers().then((result) => {
+    console.log(result.data);
+    this.groupMembers = result.data;
+});
+},
+
+
     joingroup(id){
       const functions = getFunctions(app);
       const joingroup = httpsCallable(functions, 'joingroup?id=' + id);
@@ -107,7 +139,33 @@ export default {
       leavegroup({ members : this.handle }).then((result) => {
         this.getGroups();
       });
+    },
+
+    getEmailOfLikes(){
+      const functions = getFunctions(app);
+      const getEmailOfLikes = httpsCallable(functions, 'getemailoflikes');
+      getEmailOfLikes().then((result) => {
+        console.log(result.data);
+        this.likedEmailsArray = result.data;
+      });
+    },
+
+    
+    
+
+    displayGroupLikes(){
+      this.getEmailOfLikes();
+      this.getGroupMembers();
+      for(let i = 0; i < this.groupMembers; i++){
+        if(this.likedEmailsArray[i] === this.groupMembers[i]){
+          console.log(this.groupMembers[i] + " liked this house");
+        }
+        else{
+          console.log("No group members have liked a house");
+        }
+      }
     }
+
   }
   }
 </script>
