@@ -23,6 +23,7 @@ function isAuth(to, from, next){
     });
 }
 
+
 export default [
     { path: '/', component: loadPage('Home') },
     { path: '/StudentSignUp', component: loadPage('StudentSignUp') },
