@@ -1,31 +1,35 @@
 <template>
-
-
-  <body>
-  <div class="align-content-center"  style=" box-sizing: border-box; width: 500px;
+  <body >
+  <div class="align-content-center"  style=" position: absolute; box-sizing: border-box; width: 500px;
               height: 500px; background: white; border-radius: 15px; margin:10px;
               border-width: 10px; border-color: #00bd7e; " >
 
     <form class="login">
       <div>
-        <h1 style="color: black; font-size: 40px; font-family: Roboto Slab ;  " class="h2 mb-3 mt-5 fw-normal"> Accomodate.me</h1>
+        <h1 style="color: black; font-size: 40px; font-family: Roboto Slab ;  " class="h2 mb-3 mt-5 fw-normal"> LOGIN</h1>
       </div>
       <hr style="width:50%; height: 10px; border: 5px cadetblue"/>
+
       <input class="inputone" v-model="email" type="email" placeholder="Email" required autofocus >
-      <input class="inputone" style="margin-top: 15px; margin-bottom: 15px;" v-model="password" type="password" placeholder="Password">
+
+      <input class="inputone" v-model="password" style="margin-top: 15px; margin-bottom: 15px;" type="password" placeholder="Password">
       <div class="mt-2">
         <div>Remember Me?</div>
         <div class="mt-2"><input type="checkbox"></div>
       </div>
+
+
+
+
       <button  @click="login" class="btn btn-lg btn-primary btn-block mt-5">LOG IN</button>
+
+
+
     </form>
   </div>
-
   </body>
 
-
 </template>
-
 <script>
 import app from "../api/firebase"
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
@@ -87,30 +91,34 @@ input[type="checkbox"]:before{
 input[type="checkbox"]:after{
   content:"";
   position: absolute;
-  color: #181818;
+  color: #f2f2f2;
   left:38px;
   bottom: -5px;
   transition: 0.3s;
+
 }
+
 input[type="checkbox"]:checked{
-  background-color: cadetblue;
+  background-color: #790404;
 }
 input[type="checkbox"]:checked:before{
-  background-color: #181818;
+  background-color: #f2f2f2;
   left:18px;
 }
 input[type="checkbox"]:checked:after{
   content:"";
-  color:cadetblue;
+  color:#790404;
 }
+
 body{
-  background-color: #FFFDD0;
+  height: 100vh;
+  background-color: #cccbd5;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.login{
 
+.login{
   max-width: 480px;
   margin: auto;
   display: flex;
@@ -132,28 +140,38 @@ body{
       linear-gradient(90deg, #ccc,#ccc) left bottom/100% 2px no-repeat,
       linear-gradient(90deg, #fafafa, #fafafa) left bottom/100% no-repeat;
 }
+
 .inputone:focus::placeholder {
   color: transparent;
 }
+
 .inputone::placeholder {
   color: #222;
   transition: color 0.3s ease;
 }
+
 .grid{
   display: grid;
   place-items: center;
 }
+
 label{
   display: inline-block;
+
 }
 .btn-block{
   display: block;
   width:250px;
+
 }
 .btn-primary{
   background-color: #790404;
   border-color: #790404;
 }
+
+
+
+
 .toggle span{
   position: absolute;
   top: 0;
@@ -163,7 +181,9 @@ label{
   display: block;
   background: white;
   border-radius: 10px;
+
   box-shadow: 0 3px 8px rgb(0 0 0 / 20%);
+
   transition: all .2s ease;
 }
 .toggle span:before {
@@ -179,4 +199,5 @@ label{
   opacity: 1;
   pointer-events: none;
 }
+
 </style>

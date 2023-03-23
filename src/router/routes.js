@@ -28,7 +28,10 @@ export default [
     { path: '/StudentSignUp', component: loadPage('StudentSignUp') },
     { path: '/OwnerSignUp', component: loadPage('OwnerSignUp')},
     { path: '/StudentAccount', component: loadPage('StudentAccount'),beforeEnter: isAuth },
-    { path: '/OwnerAccount', component: loadPage('OwnerAccount'),beforeEnter: isAuth },
+    { path: '/OwnerAccount', component: loadPage('OwnerAccount'),beforeEnter: isAuth},
     {path: '/StudentLogin',component: loadPage('StudentLogin')},
     {path: '/OwnerLogin',component: loadPage('OwnerLogin')},
+    {path: '/test',component: loadPage('Testing2')},
+    {path: '/OAP',component: loadPage('OwnerAccountPage')},
+
 ]

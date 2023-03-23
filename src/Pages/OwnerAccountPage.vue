@@ -1,0 +1,267 @@
+<template>
+  <div class="account-page">
+    <h1>My Account</h1>
+    <button type="button" class="btn btn-success" @click="show('createPopup')"><p class="white mainFont">
+      Add New House
+    </p>
+    </button>
+    <div class="popup" id="createPopup">
+      <form>
+        <div class="form-group">
+          <label for="groupName">House Name</label>
+          <input  class="form-control" id="groupName" v-model="houseName" placeholder="Location...">
+        </div>
+        <div class="form-group">
+          <label for="size">Location</label>
+          <input  class="form-control" id="size" v-model="location" placeholder="Number of members...">
+        </div>
+        <div class="form-group">
+          <label for="size">Description</label>
+          <input  class="form-control" id="size" v-model="description" placeholder="Add a description...">
+        </div>
+        <div class="form-group">
+          <label for="size">Number of Bedrooms</label>
+          <input  class="form-control" id="size" v-model="numBed" placeholder="eg. 4...">
+        </div>
+        <div class="form-group">
+          <label for="size">Number of Bathrooms</label>
+          <input  class="form-control" id="size" v-model="numBath" placeholder="eg. 2...">
+        </div>
+        <div>
+          <input type="file" id="file" v-on:change="file = $event.target.files[0]" >
+          hello
+        </div>
+        <br>
+        <button type="submit" class="btn btn-primary" @click.prevent="addHouse();hide('createPopup')">Submit</button>
+        <button type="button" class="btn btn-secondary" @click.prevent="hide('createPopup')">Cancel</button>
+      </form>
+    </div>
+    <form v-if="showHouseForm">
+      <h2>
+        Add a New House
+      </h2>
+    </form>
+
+
+
+
+    <h2>My Houses</h2>
+    <ul>
+      <li v-for="house in houses" :key="house.id">
+
+          <div class="card" style="width: 18rem;">
+            <img :src="house.data.image" class="card-img-top" alt="...">
+            <div class="card-body">
+              <p class="card-text">Name:  {{ house.data.name }}</p>
+              <p class="card-text">Location: {{ house.data.location }}</p>
+              <p class="card-text">Description: {{ house.data.description }}</p>
+              <p class="card-text">Bedrooms: {{ house.data.numBed }}</p>
+              <p class="card-text">Bathrooms: {{ house.data.numBath }}</p>
+              <a href="/" target="_blank" style="#0f8fef : white">See More</a>
+            </div>
+          </div>
+
+      </li>
+    </ul>
+    <h2>My Likes</h2>
+    <ul>
+      <li v-for="like in likes" :key="like.id">
+        {{ like.property.address }}
+      </li>
+    </ul>
+    <h2>Account Settings</h2>
+    <form @submit.prevent="saveSettings">
+      <label>
+        Name:
+        <input type="text" v-model="name">
+      </label>
+      <label>
+        Email:
+        <input type="email" v-model="email">
+      </label>
+      <label>
+        Password:
+        <input type="password" v-model="password">
+      </label>
+      <button type="submit">Save</button>
+    </form>
+  </div>
+</template>
+
+<script>
+
+import firebase from '../api/firebase';
+import app from '../api/firebase';
+import { getFunctions, httpsCallable } from "firebase/functions";
+import { getFirestore, collection, getDocs } from 'firebase/firestore/lite';
+const db = getFirestore(app);
+
+import 'firebase/storage';
+import 'firebase/functions';
+import {getStorage, ref, uploadBytesResumable, uploadBytes, getDownloadURL} from 'firebase/storage';
+
+export default {
+  data() {
+    return {
+      houses: [], // an array of house objects
+      likes: [], // an array of like objects
+      name: '', // the landlord's name
+      email: '', // the landlord's email address
+      password: '', // the landlord's password
+      imageURL: '',
+      showHouseForm: false,
+      houseName:'',
+      location:'',
+      description:'',
+      numBath:'',
+      numBed:'',
+      file: this.file,
+      filePath: "images/",
+
+
+    };
+  },
+  created() {
+    // fetch houses and likes data from an API
+    this.fetchHouses();
+   // this.fetchLikes();
+  },
+  methods: {
+    show(id) {
+      document.getElementById(id).style.display = 'block';
+    },
+    hide(id) {
+      document.getElementById(id).style.display = 'none';
+    },
+    fetchHouses() {
+      // make an API request to fetch houses data
+      // update this.houses with the response data
+      const functions = getFunctions(app);
+      // Uncomment this section if your local emulators are running and you wish to test locally
+      //if(window.location.hostname === 'localhost') // Checks if working locally
+      //connectFunctionsEmulator(functions, "localhost", 5001);
+      const getHouses = httpsCallable(functions, 'gethouses');
+      getHouses().then((result) => {
+        // Read result of the Cloud Function.
+        // /** @type {any} */
+        console.log(result.data);
+        this.houses = result.data;
+      });
+    },
+    fetchLikes() {
+      // make an API request to fetch likes data
+      // update this.likes with the response data
+    },
+    addHouse() {
+      const functions = getFunctions(app);
+      const uploadHouse = httpsCallable(functions, 'uploadHouse');
+
+      const storage = getStorage();
+      const metadata = {
+        contentType: 'image/jpeg'
+      };
+      const fileInput = document.getElementById('file');
+      const fileName = fileInput.files[0].name;
+      console.log(fileName)
+      this.filePath += fileName;
+      const storageRef = ref(storage, this.filePath);
+      const uploadTask = uploadBytesResumable(storageRef, this.file, metadata);
+
+      uploadTask.on('state_changed',
+          (snapshot) => {
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes)*100;
+            console.log('upload is '+ progress + '% done');
+            switch (snapshot.state){
+              case 'paused':
+                console.log('Upload is paused');
+                break;
+              case 'running':
+                console.log('Upload is running');
+                break;
+
+            }
+          },
+          (error)=> {
+            switch (error.code) {
+              case 'storage/unauthorized':
+                // User doesn't have permission to access the object
+                break;
+              case 'storage/canceled':
+                // User canceled the upload
+                break;
+
+                // ...
+
+              case 'storage/unknown':
+                // Unknown error occurred, inspect error.serverResponse
+                break;
+            }
+          },
+
+          () => {
+            // Upload completed successfully, now we can get the download URL
+            getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+              console.log('File available at', downloadURL);
+              this.imageURL= downloadURL;
+              console.log(this.imageURL)
+            });
+          }
+      )
+
+      uploadHouse({"name": this.houseName, "location": this.location, "description": this.description, "numBed":this.numBed, "numBath":this.numBath, "image": this.imageURL }).then((result) => {
+        this.fetchHouses();
+      });
+    },
+
+
+    saveSettings() {
+      // make an API request to save the updated account settings
+      // update this.name, this.email, and this.password with the new values
+    },
+
+    updatepicURL(id){
+
+    }
+  },
+};
+</script>
+
+<style scoped>
+.popup {
+  display: none;
+  position: fixed;
+  padding: 10px;
+  width: 280px;
+  left: 50%;
+  margin-left: -150px;
+  height: 180px;
+  top: 50%;
+  margin-top: -100px;
+  background: #FFF;
+  border: 3px solid #F04A49;
+  z-index: 20;
+}
+#popup:after {
+  position: fixed;
+  content: "";
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: -2;
+}
+#popup:before {
+  position: absolute;
+  content: "";
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: #FFF;
+  z-index: -1;
+}
+.btn.mainColour:hover {
+  opacity: .5;
+}
+</style>

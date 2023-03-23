@@ -1,32 +1,74 @@
-<template>
+<template xmlns="http://www.w3.org/1999/html">
   <div>
     <nav class="navbar fixed-top navbar navbar-expand-lg navbar-dark mainColour"  data-bs-theme="light" >
-      <div>
-        <h1 class="navbar-brand mainFont" href="#">Accommodate<a class="secondaryColour">Me</a></h1>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link active mainFont" aria-current="page"><router-link to="/" class="router-link">Home</router-link></a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link mainFont" href="#">About</a>
-            </li>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle mainFont" href="#"  data-bs-toggle="dropdown" aria-expanded="false">
-                Account
+      <h1 class="navbar-brand mb-0 h1">
+
+        <h1 class="logoFont1" href="#">
+          <img class = "d-inline-block align-top"
+               src="/House.ico"
+               width = "25" height="25"/>
+           Accommodate<a class="logoFont2">Me </a>
+        </h1>
+      </h1>
+      <button
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarone"
+          class="navbar-toggler"
+          aria-controls="navbarone"
+          aria-expanded="false"
+          aria-label="Toggle Navigation"
+          >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id = "navbarone">
+          <ul class="navbar-nav">
+            <li class="nav-item active fontMain">
+              <a href="#" class="nav-link active">
+                <router-link to="/" class="fontMain">Home</router-link>
               </a>
-              <ul class="dropdown-menu">
-                <li v-if="isLoggedIn"><a class="dropdown-item mainFont"><router-link to="/OwnerAccount" class="black">Profile</router-link> </a></li>
-                <li v-if="!isLoggedIn"><a class="dropdown-item mainFont"><router-link to="/Login" class="black">Login</router-link></a></li>
-                <li v-if="!isLoggedIn"><a class="dropdown-item mainFont"><router-link to="/OwnerSignUp" class="black">Sign up</router-link> </a></li>
-                <li><a class="dropdown-item mainFont">><router-link @click="logout" to="/">Logout</router-link></a></li>
-              </ul>
+            </li>
+            <li class="nav-item active fontMain">
+              <a href="#" class="nav-link active">
+                <router-link to="/" class="fontMain" >About</router-link>
+              </a>
+            </li>
+            <li class="nav-item dropdown fontMain">
+              <a href="#"
+                 class="nav-link dropdown-toggle"
+                 id="navbarDropdown" role="button"
+                 data-bs-toggle="dropdown"
+                 aria-expanded="false" >
+                Account
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <li>
+                    <a href="#"
+                      class="dropdown-item">
+                      <router-link to="/" class="fontMainDropdown">Home</router-link>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" class="dropdown-item">
+                      <router-link to="/StudentLogin" class="fontMainDropdown">Log In</router-link>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" class="dropdown-item">
+                      <router-link to="/StudentSignUp" class="fontMainDropdown">Sign Up</router-link>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" class="dropdown-item">
+                      Log Out
+                    </a>
+                  </li>
+                </ul>
+
+
+              </a>
+
             </li>
           </ul>
-        </div>
       </div>
     </nav>
   </div>
@@ -87,5 +129,16 @@ export default
 </script>
 
 <style scoped>
-
+.fontMain{
+  font-family: Calibri,ui-sans-serif;
+  color: white;
+  text-transform: uppercase;
+  font-weight: bold ;
+}
+.fontMainDropdown{
+  font-family: Calibri,ui-sans-serif;
+  color: #790404;
+  text-transform: uppercase;
+  font-weight: bold ;
+}
 </style>

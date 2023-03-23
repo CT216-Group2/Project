@@ -1,6 +1,7 @@
 const functions = require("firebase-functions");
 const admin = require('firebase-admin');
 const cors = require('cors')({origin:true});
+
 admin.initializeApp();
 
 // // Create and Deploy Your First Cloud Functions
@@ -139,4 +140,68 @@ exports.securefunction =
         }
     });
 
+exports.uploadImage = functions.https.onRequest((request, response) =>{
+    cors(request, response,  () => {
 
+        return admin.firestore().collection('Images').add(request.body).then(() => {
+            response.json({data: "Saved in the database"});
+        });
+    });
+});
+
+exports.postURL = functions.https.onRequest((request, response) => {
+
+    cors(request, response, () => {
+
+        return admin.firestore().collection('Houses').doc('Houses', 'xcU9PcJAlGgqq5c5uKJu').update(request.body.data.image).then(() => {
+            response.json({data: "Updated document in database"});
+        });
+    });
+});
+exports.gethouses = functions.https.onRequest((request, response) => {
+
+    cors(request, response, () => {
+        // 1. Connect to our Firestore database
+        console.log("The request made it in here");
+        let myData = [];
+        return admin.firestore().collection('House').get().then((snapshot) => {
+
+            if (snapshot.empty) {
+                console.log('No matching documents.');
+                response.json({data: {message : 'No data in database'}});
+                return;
+            }
+
+            snapshot.forEach(doc => {
+                console.log(doc.id);
+                myData.push(Object.assign(doc.data(), {id:doc.id}));
+            });
+            console.log(myData);
+
+            // 2. Send data back to client
+            response.json({data: myData});
+        });
+    });
+});
+
+exports.uploadHouse = functions.https.onRequest((request, response) => {
+    cors(request, response, () => {
+        return admin.firestore().collection('House').add(request.body).then(() => {
+            response.json({data: "Saved in the database"  });
+        });
+    });
+});
+
+
+exports.updateImage = functions.https.onRequest((request, response) => {
+    cors(request, response, () => {
+        const id = request.body.data.id;
+        const image = request.body.data.image
+        console.log("This is the body" + request.body.data);
+        return admin.firestore().collection('House').doc(id).update({
+            "data.image" : image
+        }).then(() => {
+            response.json({data: "Updated document in database"});
+        });
+    });
+});
