@@ -158,13 +158,17 @@ exports.postURL = functions.https.onRequest((request, response) => {
         });
     });
 });
+
 exports.gethouses = functions.https.onRequest((request, response) => {
 
     cors(request, response, () => {
         // 1. Connect to our Firestore database
         console.log("The request made it in here");
+        const user = request.body.data.user;
+        console.log(user);
         let myData = [];
-        return admin.firestore().collection('House').get().then((snapshot) => {
+
+        return admin.firestore().collection('LandlordHouse').where('user', '==', user).get().then((snapshot) => {
 
             if (snapshot.empty) {
                 console.log('No matching documents.');
@@ -172,23 +176,55 @@ exports.gethouses = functions.https.onRequest((request, response) => {
                 return;
             }
 
+            let promises = [];
             snapshot.forEach(doc => {
                 console.log(doc.id);
-                myData.push(Object.assign(doc.data(), {id:doc.id}));
+                const houseId = doc.data().houseId;
+                promises.push(admin.firestore().collection('House').doc(houseId).get());
             });
-            console.log(myData);
 
-            // 2. Send data back to client
-            response.json({data: myData});
+            Promise.all(promises).then((houseDocs) => {
+                houseDocs.forEach((houseDoc) => {
+                    myData.push(Object.assign(houseDoc.data(), {id: houseDoc.id}));
+                });
+                console.log(myData);
+
+                // 2. Send data back to client
+                response.json({data: myData});
+            }).catch((error) => {
+                console.log("Error getting house documents:", error);
+                response.json({data: {message : 'Error getting house documents'}});
+            });
         });
     });
 });
 
+
 exports.uploadHouse = functions.https.onRequest((request, response) => {
     cors(request, response, () => {
-        return admin.firestore().collection('House').add(request.body).then(() => {
-            response.json({data: "Saved in the database"  });
-        });
+        console.log(request.body);
+        const landlord = request.body.data.user;
+        const houseData = {
+            name: request.body.data.name,
+            location: request.body.data.location,
+            description: request.body.data.description,
+            numBed: request.body.data.numBed,
+            numBath: request.body.data.numBath,
+            image: request.body.data.image, // Save the image array as a field in the document
+            user: landlord
+        };
+        return admin.firestore().collection('House').add(houseData).then((docRef) => {
+            const newHouseData = {
+                user: landlord,
+                houseId: docRef.id
+            };
+            return admin.firestore().collection('LandlordHouse').add(newHouseData);
+        }).then(() => {
+            response.json({data: "Saved in the database"});
+        }).catch((error) => {
+            console.error("Error adding document: ", error);
+            response.status(500).send("Error adding document: ", error);
+        })
     });
 });
 

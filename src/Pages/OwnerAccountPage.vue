@@ -1,7 +1,8 @@
 <template>
   <div class="account-page">
     <h1>My Account</h1>
-    <button type="button" class="btn btn-success" @click="show('createPopup')"><p class="white mainFont">
+    <button type="button" class="btn btn-success" @click="show('createPopup')">
+      <p class="white mainFont">
       Add New House
     </p>
     </button>
@@ -28,7 +29,7 @@
           <input  class="form-control" id="size" v-model="numBath" placeholder="eg. 2...">
         </div>
         <div>
-          <input type="file" id="file" v-on:change="file = $event.target.files[0]" >
+          <input type="file" id="file" multiple="multiple" v-on:change="fileArray=$event.target.files" >
           hello
         </div>
         <br>
@@ -46,11 +47,13 @@
 
 
     <h2>My Houses</h2>
+    <div v-if="houses.length>0">
     <ul>
+
       <li v-for="house in houses" :key="house.id">
 
           <div class="card" style="width: 18rem;">
-            <img :src="house.data.image" class="card-img-top" alt="...">
+          <!-- <img :src="house.data.image[0]" class="card-img-top" alt="...">-->
             <div class="card-body">
               <p class="card-text">Name:  {{ house.data.name }}</p>
               <p class="card-text">Location: {{ house.data.location }}</p>
@@ -63,6 +66,7 @@
 
       </li>
     </ul>
+    </div>
     <h2>My Likes</h2>
     <ul>
       <li v-for="like in likes" :key="like.id">
@@ -99,7 +103,7 @@ const db = getFirestore(app);
 import 'firebase/storage';
 import 'firebase/functions';
 import {getStorage, ref, uploadBytesResumable, uploadBytes, getDownloadURL} from 'firebase/storage';
-
+import {getAuth, onAuthStateChanged} from "firebase/auth";
 export default {
   data() {
     return {
@@ -108,22 +112,37 @@ export default {
       name: '', // the landlord's name
       email: '', // the landlord's email address
       password: '', // the landlord's password
-      imageURL: '',
       showHouseForm: false,
       houseName:'',
       location:'',
       description:'',
       numBath:'',
       numBed:'',
-      file: this.file,
+      file:'',
+      fileArray:[],
       filePath: "images/",
-
+      handle:'',
+      user:null,
 
     };
   },
   created() {
+    const auth = getAuth(app);
+    onAuthStateChanged(auth, (user) => {
+
+      if (user) {
+        console.log("User", user);
+        this.user = user;
+        this.handle = user.email;
+        this.fetchHouses();
+        // User is signed in
+      } else {
+        console.log("No user found")
+        // User is not signed in
+      }
+    });
     // fetch houses and likes data from an API
-    this.fetchHouses();
+
    // this.fetchLikes();
   },
   methods: {
@@ -134,18 +153,12 @@ export default {
       document.getElementById(id).style.display = 'none';
     },
     fetchHouses() {
-      // make an API request to fetch houses data
-      // update this.houses with the response data
+      console.log('hello')
       const functions = getFunctions(app);
-      // Uncomment this section if your local emulators are running and you wish to test locally
-      //if(window.location.hostname === 'localhost') // Checks if working locally
-      //connectFunctionsEmulator(functions, "localhost", 5001);
-      const getHouses = httpsCallable(functions, 'gethouses');
-      getHouses().then((result) => {
-        // Read result of the Cloud Function.
-        // /** @type {any} */
-        console.log(result.data);
+      const gethouses = httpsCallable(functions, 'gethouses');
+      gethouses({"user" : this.handle}).then((result) => {
         this.houses = result.data;
+        console.log(this.houses);
       });
     },
     fetchLikes() {
@@ -155,61 +168,55 @@ export default {
     addHouse() {
       const functions = getFunctions(app);
       const uploadHouse = httpsCallable(functions, 'uploadHouse');
+      const pictureURLArray = [];
+      const length = this.fileArray.length;
 
-      const storage = getStorage();
-      const metadata = {
-        contentType: 'image/jpeg'
-      };
-      const fileInput = document.getElementById('file');
-      const fileName = fileInput.files[0].name;
-      console.log(fileName)
-      this.filePath += fileName;
-      const storageRef = ref(storage, this.filePath);
-      const uploadTask = uploadBytesResumable(storageRef, this.file, metadata);
+      for (let i = 0; i < length; i++) {
+        const storage = getStorage();
+        const metadata = {
+          contentType: 'image/jpeg'
+        };
+        this.filePath = "images/";
+        const fileName = this.fileArray[i].name;
+        this.filePath += fileName;
+        const storageRef = ref(storage, this.filePath);
+        const uploadTask = uploadBytesResumable(storageRef, this.fileArray[i], metadata);
 
-      uploadTask.on('state_changed',
-          (snapshot) => {
-            const progress = (snapshot.bytesTransferred / snapshot.totalBytes)*100;
-            console.log('upload is '+ progress + '% done');
-            switch (snapshot.state){
-              case 'paused':
-                console.log('Upload is paused');
-                break;
-              case 'running':
-                console.log('Upload is running');
-                break;
-
+        uploadTask.on('state_changed',
+            (snapshot) => {
+              const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+              console.log('upload is ' + progress + '% done');
+            },
+            (error) => {
+              console.error("Error uploading file: ", error);
+            },
+            () => {
+              // Upload completed successfully, now we can get the download URL
+              getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                console.log('File available at', downloadURL);
+                pictureURLArray.push(downloadURL);
+              });
             }
-          },
-          (error)=> {
-            switch (error.code) {
-              case 'storage/unauthorized':
-                // User doesn't have permission to access the object
-                break;
-              case 'storage/canceled':
-                // User canceled the upload
-                break;
+        );
+      }
 
-                // ...
-
-              case 'storage/unknown':
-                // Unknown error occurred, inspect error.serverResponse
-                break;
-            }
-          },
-
-          () => {
-            // Upload completed successfully, now we can get the download URL
-            getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-              console.log('File available at', downloadURL);
-              this.imageURL= downloadURL;
-              console.log(this.imageURL)
-            });
-          }
-      )
-
-      uploadHouse({"name": this.houseName, "location": this.location, "description": this.description, "numBed":this.numBed, "numBath":this.numBath, "image": this.imageURL }).then((result) => {
-        this.fetchHouses();
+      // Wait for all the getDownloadURL promises to resolve before calling the uploadHouse function
+      Promise.all(pictureURLArray).then(() => {
+        console.log("pictureURLArray is full");
+        uploadHouse({
+          "name": this.houseName,
+          "location": this.location,
+          "description": this.description,
+          "numBed": this.numBed,
+          "numBath": this.numBath,
+          "image": pictureURLArray,
+          "user": this.handle
+        }).then((result) => {
+          console.log("House uploaded successfully");
+          this.fetchHouses();
+        }).catch((error) => {
+          console.error("Error uploading house: ", error);
+        });
       });
     },
 
@@ -265,3 +272,5 @@ export default {
   opacity: .5;
 }
 </style>
+
+
