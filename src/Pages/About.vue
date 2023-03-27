@@ -3,21 +3,25 @@
 
    <div class="whoBox" >
      <div class="imgCont" style="display: inline-block; float: left">
-       <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.oCEiGtGNOp4ljlQ3vEUBkAHaFj%26pid%3DApi&f=1&ipt=549483e457826ea98d5c32e4ce17193e1cdc401d42c4cedf939283a4217d79c7&ipo=images" style="object-fit: cover; max-height: 100%; max-width: 320px; border-radius: .45em; margin: .1vw">
+       <img src="https://umbc.edu/wp-content/uploads/2022/06/edited-Fouts-group-image_67194113-scaled-e1655476278541.jpg" style="object-fit: cover; max-height: 100%; max-width: 320px; border-radius: .45em; margin: .1vw">
      </div>
       <div class="whoCont" style="display: inline-block">
         <h1>Who Are We?</h1>
         <p>
-          <br>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci veli
+          <br>AccommodateMe consists of five founding members, Michael, Daniel, Bill, Finn and Éanna
+          all studying Computer Science in University of Galway. We all live in rented accommodation in Galway
+          City and know first hand how hard it is to secure affordable accommodation in the current Housing Crisis.
         </p>
       </div>
   </div>
 
   <div class="whatBox">
     <div class="whatCont">
-    <h1>What We Do</h1>
+    <h1>What we Do</h1>
       <p>
-        <br>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci veli
+        <br>Our primary goal would be to connect students with suitable accommodation options in Galway.
+        We let students choose which area they would like to live in, and create groups with other viable tenants
+        to contact the landlord and show interest in the property.
       </p>
     </div>
 
@@ -28,8 +32,8 @@
     </div>
     <div class="card-body">
       <blockquote class="blockquote mb-0">
-        <p>“Dogs have important jobs, like barking when the doorbell rings, but cats have no function in a house whatsoever."</p>
-        <footer class="blockquote-footer">W. Bruce Cameron <cite title="Source Title">A Dogs Purpose</cite></footer>
+        <p>“Where Student Meets Houses"</p>
+        <footer class="blockquote-footer"> <cite title="Source Title"></cite></footer>
       </blockquote>
     </div>
   </div>
