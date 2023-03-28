@@ -1,6 +1,24 @@
 <template>
   <div class="account-page">
     <h1>My Account</h1>
+    <div class="details">
+        <div class="detail_left">
+            <div class = "pd-row">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-bounding-box" viewBox="0 0 16 16">
+                <path d="M1.5 1a.5.5 0 0 0-.5.5v3a.5.5 0 0 1-1 0v-3A1.5 1.5 0 0 1 1.5 0h3a.5.5 0 0 1 0 1h-3zM11 .5a.5.5 0 0 1 .5-.5h3A1.5 1.5 0 0 1 16 1.5v3a.5.5 0 0 1-1 0v-3a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 1-.5-.5zM.5 11a.5.5 0 0 1 .5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 1 0 1h-3A1.5 1.5 0 0 1 0 14.5v-3a.5.5 0 0 1 .5-.5zm15 0a.5.5 0 0 1 .5.5v3a1.5 1.5 0 0 1-1.5 1.5h-3a.5.5 0 0 1 0-1h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 1 .5-.5z"/>
+                <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm8-9a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+              </svg>
+              <div>
+                <h3>User Name </h3>
+                <p>Landlord</p>
+              </div>
+            </div>
+
+        </div>
+        <div class="detail_right">
+
+        </div>
+    </div>
     <button type="button" class="btn btn-success" @click="show('createPopup')">
       <p class="white mainFont">
       Add New House
@@ -53,42 +71,29 @@
       <li v-for="house in houses" :key="house.id">
 
           <div class="card" style="width: 18rem;">
-          <!-- <img :src="house.data.image[0]" class="card-img-top" alt="...">-->
+           <img :src="house.image[0]" class="card-img-top" alt="...">
             <div class="card-body">
-              <p class="card-text">Name:  {{ house.data.name }}</p>
-              <p class="card-text">Location: {{ house.data.location }}</p>
-              <p class="card-text">Description: {{ house.data.description }}</p>
-              <p class="card-text">Bedrooms: {{ house.data.numBed }}</p>
-              <p class="card-text">Bathrooms: {{ house.data.numBath }}</p>
+              <p class="card-text">Name:  {{ house.name }}</p>
+              <p class="card-text">Location: {{ house.location }}</p>
+              <p class="card-text">Description: {{ house.description }}</p>
+              <p class="card-text">Bedrooms: {{ house.numBed }}</p>
+              <p class="card-text">Bathrooms: {{ house.numBath }}</p>
+              <p class="card-text" >Likes: {{numLikes}}</p>
               <a href="/" target="_blank" style="#0f8fef : white">See More</a>
+
             </div>
           </div>
 
       </li>
     </ul>
     </div>
-    <h2>My Likes</h2>
-    <ul>
-      <li v-for="like in likes" :key="like.id">
-        {{ like.property.address }}
-      </li>
-    </ul>
+
     <h2>Account Settings</h2>
-    <form @submit.prevent="saveSettings">
-      <label>
-        Name:
-        <input type="text" v-model="name">
-      </label>
-      <label>
-        Email:
-        <input type="email" v-model="email">
-      </label>
-      <label>
-        Password:
-        <input type="password" v-model="password">
-      </label>
+    <div>
+      <p>Email:  {{this.user.email}}</p>
+      <p>Password: {{this.password}}</p>
       <button type="submit">Save</button>
-    </form>
+    </div>
   </div>
 </template>
 
@@ -109,6 +114,7 @@ export default {
     return {
       houses: [], // an array of house objects
       likes: [], // an array of like objects
+      numLikes: [],
       name: '', // the landlord's name
       email: '', // the landlord's email address
       password: '', // the landlord's password
@@ -123,21 +129,21 @@ export default {
       filePath: "images/",
       handle:'',
       user:null,
-
+      counter:-1,
     };
   },
   created() {
     const auth = getAuth(app);
     onAuthStateChanged(auth, (user) => {
-
       if (user) {
-        console.log("User", user);
+        //console.log("User", user);
         this.user = user;
         this.handle = user.email;
         this.fetchHouses();
+        this.fetchLikes(this.houses);
         // User is signed in
       } else {
-        console.log("No user found")
+        //console.log("No user found")
         // User is not signed in
       }
     });
@@ -153,17 +159,24 @@ export default {
       document.getElementById(id).style.display = 'none';
     },
     fetchHouses() {
-      console.log('hello')
       const functions = getFunctions(app);
       const gethouses = httpsCallable(functions, 'gethouses');
       gethouses({"user" : this.handle}).then((result) => {
         this.houses = result.data;
         console.log(this.houses);
       });
+
     },
-    fetchLikes() {
-      // make an API request to fetch likes data
-      // update this.likes with the response data
+    fetchLikes(houses) {
+      const functions = getFunctions(app);
+      const getLikes = httpsCallable(functions, 'getLikes');
+      for(let j=0;j<houses.length;j++) {
+        getLikes({"houseId": houses[j].houseId}).then((result) => {
+          const likes = result.data;
+          this.numLikes.push(likes.length);
+          console.log(this.likes);
+        });
+      }
     },
     addHouse() {
       const functions = getFunctions(app);
@@ -185,7 +198,7 @@ export default {
         uploadTask.on('state_changed',
             (snapshot) => {
               const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-              console.log('upload is ' + progress + '% done');
+              //  console.log('upload is ' + progress + '% done');
             },
             (error) => {
               console.error("Error uploading file: ", error);
@@ -193,7 +206,7 @@ export default {
             () => {
               // Upload completed successfully, now we can get the download URL
               getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                console.log('File available at', downloadURL);
+               // console.log('File available at', downloadURL);
                 pictureURLArray.push(downloadURL);
               });
             }
@@ -202,7 +215,7 @@ export default {
 
       // Wait for all the getDownloadURL promises to resolve before calling the uploadHouse function
       Promise.all(pictureURLArray).then(() => {
-        console.log("pictureURLArray is full");
+       // console.log("pictureURLArray is full");
         uploadHouse({
           "name": this.houseName,
           "location": this.location,
@@ -210,9 +223,9 @@ export default {
           "numBed": this.numBed,
           "numBath": this.numBath,
           "image": pictureURLArray,
-          "user": this.handle
+          "user": this.handle,
         }).then((result) => {
-          console.log("House uploaded successfully");
+         // console.log("House uploaded successfully");
           this.fetchHouses();
         }).catch((error) => {
           console.error("Error uploading house: ", error);
@@ -270,6 +283,15 @@ export default {
 }
 .btn.mainColour:hover {
   opacity: .5;
+}
+
+.details{
+  background: #fff;
+  padding: 20px;
+  border-radius: 4px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
 }
 </style>
 

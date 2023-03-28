@@ -229,7 +229,7 @@ exports.uploadHouse = functions.https.onRequest((request, response) => {
 });
 
 
-exports.updateImage = functions.https.onRequest((request, response) => {
+exports.updateLikes = functions.https.onRequest((request, response) => {
     cors(request, response, () => {
         const id = request.body.data.id;
         const image = request.body.data.image
@@ -238,6 +238,45 @@ exports.updateImage = functions.https.onRequest((request, response) => {
             "data.image" : image
         }).then(() => {
             response.json({data: "Updated document in database"});
+        });
+    });
+});
+exports.getLikes = functions.https.onRequest((request, response) => {
+
+    cors(request, response, () => {
+        // 1. Connect to our Firestore database
+        console.log("The request made it in here");
+        const houseID = request.body.data.houseId;
+        console.log(houseID);
+        let myData = [];
+
+        return admin.firestore().collection('GroupLikes').where('houseId', '==', houseID).get().then((snapshot) => {
+
+            if (snapshot.empty) {
+                console.log('No matching documents.');
+                response.json({data: {message : 'No data in database'}});
+                return;
+            }
+
+            let promises = [];
+            snapshot.forEach(doc => {
+                console.log(doc.id);
+                const groupId = doc.data().groupId;
+                promises.push(admin.firestore().collection('House').doc(groupId).get());
+            });
+
+            Promise.all(promises).then((groupDocs) => {
+                groupDocs.forEach((groupDoc) => {
+                    myData.push(Object.assign(groupDoc.data(), {id: groupDocs.id}));
+                });
+                console.log(myData);
+
+                // 2. Send data back to client
+                response.json({data: myData});
+            }).catch((error) => {
+                console.log("Error getting house documents:", error);
+                response.json({data: {message : 'Error getting house documents'}});
+            });
         });
     });
 });
