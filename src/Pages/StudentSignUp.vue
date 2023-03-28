@@ -1,9 +1,11 @@
 <template>
 
+
   <v-container>
     <v-row justify="center">
       <v-col cols="12" sm="8" md="4">
         <v-form ref="form" v-model="valid">
+          <h1 justify="center">Student Sign Up</h1>
           <v-text-field
               v-model="name"
               :rules="nameRules"
@@ -59,7 +61,13 @@
 
 import app from '../api/firebase';
 import { getFunctions, httpsCallable } from "firebase/functions";
-import {createUserWithEmailAndPassword, getAuth} from "firebase/auth";
+import {createUserWithEmailAndPassword, getAuth, sendEmailVerification} from "firebase/auth";
+
+
+
+
+
+
 export default{
   name: "StudentSignUp",
   data() {
@@ -116,6 +124,14 @@ export default{
             console.log(user)
             this.postStudent();
             this.$router.push({path: '/StudentAccount'})
+            
+
+            sendEmailVerification(user)
+            .then(() => {
+             // Email verification sent!
+            // ...
+             });
+            
 // ...
           })
           .catch((error) => {
@@ -125,7 +141,12 @@ export default{
             console.log(errorMessage)
 // ..
           });
-    }
+    },
+
+    
+
+
+     
   }}
 </script>
 

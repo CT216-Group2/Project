@@ -18,6 +18,7 @@
         <div class="mt-2"><input type="checkbox"></div>
       </div>
       <button  @click.prevent="login()" class="btn btn-lg btn-primary btn-block mt-5">LOG IN</button>
+      <span class="forgot-password-link" @click.prevent="sendPasswordEmail()">Forgot Password?</span>
     </form>
   </div>
 
@@ -28,7 +29,7 @@
 
 <script>
 import app from "../api/firebase"
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
 import {getFunctions, httpsCallable} from "firebase/functions";
 export default {
   name: "StudentLogin",
@@ -64,7 +65,23 @@ export default {
           console.log("Wrong Login Page");
         }
       });
-    }
+    },
+
+
+  sendPasswordEmail(){
+    const auth = getAuth();
+sendPasswordResetEmail(auth, this.email)
+  .then(() => {
+    // Password reset email sent!
+    // ..
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    // ..
+  });
+  }
+    
   }
 }
 </script>
@@ -192,4 +209,15 @@ label{
   opacity: 1;
   pointer-events: none;
 }
+
+.forgot-password-link {
+  color: rgb(16, 152, 197);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.forgot-password-link:hover {
+  text-decoration: none;
+}
+
 </style>

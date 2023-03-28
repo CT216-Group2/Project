@@ -24,6 +24,7 @@
 
 
       <button  class="btn btn-lg btn-primary btn-block mt-5" @click.prevent="login()">LOG IN</button>
+      <span class="forgot-password-link" @click.prevent="sendPasswordEmail()">Forgot Password?</span>
 
 
 
@@ -37,7 +38,7 @@
 
 <script>
 import app from "../api/firebase"
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
 import {getFunctions, httpsCallable} from "firebase/functions";
 export default {
   name: "OwnerLogin",
@@ -73,7 +74,21 @@ export default {
           this.$router.push({path: '/OwnerAccount'});
         }
       });
-    }
+    },
+
+    sendPasswordEmail(){
+    const auth = getAuth();
+sendPasswordResetEmail(auth, this.email)
+  .then(() => {
+    // Password reset email sent!
+    // ..
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    // ..
+  });
+  }
 }
 }
 </script>
@@ -202,5 +217,15 @@ label{
   transform: scale(0);
   opacity: 1;
   pointer-events: none;
+}
+
+.forgot-password-link {
+  color: rgb(16, 152, 197);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.forgot-password-link:hover {
+  text-decoration: none;
 }
 </style>
