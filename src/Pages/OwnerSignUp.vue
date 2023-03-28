@@ -24,19 +24,17 @@
               label="Password"
               required
           ></v-text-field>
-          <v-text-field
-              v-model="area"
-              :rules="areaRules"
-              label="Area"
-              required
-          ></v-text-field>
-
           <v-btn color="#790404" @click="register" :disabled="!valid"><a class="mainFont text-white">Sign Up</a></v-btn>
 
         </v-form>
       </v-col>
     </v-row>
   </v-container>
+  <div class="alert alert-danger alert-dismissible fade show"  id="createPopup" role="alert">
+    <strong>Authentication Failed!</strong> USer already exists please check details
+    <button type="button" class="close" data-dismiss="alert" @click="hide('createPopup')" aria-label="Close">
+    </button>
+  </div>
 </template>
 
 <script>
@@ -52,10 +50,9 @@ export default {
       email: "",
       password: "",
       showPassword: false,
-      area: "",
       nameRules: [
         v => !!v || "Name is required",
-        v => v.length <= 20 || "Name must be less than 20 characters"
+        v => v.length <= 25 || "Name must be less than 25 characters"
       ],
       emailRules: [
         v => !!v || "Email is required",
@@ -64,18 +61,20 @@ export default {
       passwordRules: [
         v => !!v || "Password is required",
         v => v.length >= 6 || "Password must be at least 6 characters"
-      ],
-      areaRules: [
-        v => !!v || "Area name is required",
-        v => v.length <= 20 || "Area name must be less than 20 characters"
       ]
     };
   },
   methods: {
+    show(id) {
+      document.getElementById(id).style.display = 'block';
+    },
+    hide(id) {
+      document.getElementById(id).style.display = 'none';
+    },
     postOwner() {
       const functions = getFunctions(app);
       const postOwner = httpsCallable(functions, 'postowner');
-      postOwner({"name": this.name, "email": this.email, "area": this.area}).then((result) => {
+      postOwner({"name": this.name, "email": this.email}).then((result) => {
       });
     },
     register(){
@@ -94,7 +93,7 @@ export default {
             const errorMessage = error.message;
             console.log(errorCode)
             console.log(errorMessage)
-// ..
+            this.show('createPopup');
           });
     }
   }
@@ -102,5 +101,7 @@ export default {
 </script>
 
 <style scoped>
-
+.alert{
+  display: none;
+}
 </style>
