@@ -3,7 +3,7 @@
     <v-row justify="center">
       <v-col cols="12" sm="8" md="4">
         <v-form ref="form" v-model="valid">
-          <h1 justify="center">Owner Sign Up</h1>
+          <h1 style="text-align: center;">Owner Sign Up</h1>
           <v-text-field
               v-model="name"
               :rules="nameRules"
@@ -33,6 +33,8 @@
           ></v-text-field>
 
           <v-btn color="#790404" @click="register" :disabled="!valid"><a class="mainFont text-white">Sign Up</a></v-btn>
+          <br>
+          <span class="login-link" @click="this.$router.push({path: '/OwnerLogin'})">Already have an account? Log In Here!</span>
 
         </v-form>
       </v-col>
@@ -109,5 +111,13 @@ export default {
 </script>
 
 <style scoped>
+.login-link{
+  color: rgb(16, 152, 197);
+  text-decoration: underline;
+  cursor: pointer;
+}
 
+.login-link:hover{
+  text-decoration: none;
+}
 </style>

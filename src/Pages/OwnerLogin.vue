@@ -4,11 +4,12 @@
   <body>
   <div class="align-content-center"  style=" box-sizing: border-box; width: 500px;
               height: 500px; background: white; border-radius: 15px; margin:10px;
-              border-width: 10px; border-color: #00bd7e; " >
+              border-width: 10px; border-color: #00bd7e;  ">
 
     <form class="login">
       <div>
-        <h1 style="color: black; font-size: 40px; font-family: Roboto Slab ;  " class="h2 mb-3 mt-5 fw-normal"> Accomodate.me</h1>
+        <h1 style="color: black; font-size: 40px; font-family: Roboto Slab ;  " class="h2 mb-3 mt-5 fw-normal"> AccomodateMe</h1>
+        <h2 style=" text-align: center;  color: black; font-size: 20px; font-family: Roboto Slab ;  " class="h2 mb-3 mt-5 fw-normal">Owner Login</h2>
       </div>
       <hr style="width:50%; height: 10px; border: 5px cadetblue"/>
 
@@ -25,6 +26,7 @@
 
       <button  class="btn btn-lg btn-primary btn-block mt-5" @click.prevent="login()">LOG IN</button>
       <span class="forgot-password-link" @click.prevent="sendPasswordEmail()">Forgot Password?</span>
+      <span class="sign-up-link" @click="this.$router.push({path: '/OwnerSignUp'})">Don't have an account? Sign Up Here!</span>
 
 
 
@@ -226,6 +228,16 @@ label{
 }
 
 .forgot-password-link:hover {
+  text-decoration: none;
+}
+
+.sign-up-link{
+  color: rgb(16, 152, 197);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.sign-up-link:hover{
   text-decoration: none;
 }
 </style>

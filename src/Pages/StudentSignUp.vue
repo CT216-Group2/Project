@@ -5,7 +5,7 @@
     <v-row justify="center">
       <v-col cols="12" sm="8" md="4">
         <v-form ref="form" v-model="valid">
-          <h1 justify="center">Student Sign Up</h1>
+          <h1 style="text-align: center;">Student Sign Up</h1>
           <v-text-field
               v-model="name"
               :rules="nameRules"
@@ -51,6 +51,8 @@
               required
           ></v-text-field>
           <v-btn color="#790404" @click="register" :disabled="!valid"><a class="mainColour mainFont">Sign Up</a></v-btn>
+          <br>
+          <span class="login-link" @click="this.$router.push({path: '/StudentLogin'})">Already have an account? Log In Here!</span>
         </v-form>
       </v-col>
     </v-row>
@@ -151,5 +153,15 @@ export default{
 </script>
 
 <style scoped>
+
+.login-link{
+  color: rgb(16, 152, 197);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.login-link:hover{
+  text-decoration: none;
+}
 
 </style>
