@@ -297,7 +297,8 @@ exports.joingroup = functions.https.onRequest((request, response) => {
                     existingDocRef = querySnapshot.docs[0].ref;
                     const existingData = querySnapshot.docs[0].data();
                     return admin.firestore().collection('Groups').doc(existingData.groupId).update({
-                        "data.members" : admin.firestore.FieldValue.arrayRemove(newMember)
+                        "data.members" : admin.firestore.FieldValue.arrayRemove(newMember),
+                        "data.size": admin.firestore.FieldValue.increment(-1)
                     });
                 } else {
                     // Member does not exist, so just add them to the "StudentGroup" collection

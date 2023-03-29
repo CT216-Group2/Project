@@ -48,7 +48,7 @@
               label="Year of Study"
               required
           ></v-text-field>
-          <v-btn color="#790404" @click="register" :disabled="!valid"><a class="mainColour mainFont">Sign Up</a></v-btn>
+          <v-btn color="#790404" @click="register" :disabled="!valid"><a class="mainFont text-white">Sign Up</a></v-btn>
         </v-form>
       </v-col>
     </v-row>

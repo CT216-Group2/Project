@@ -34,5 +34,6 @@ export default [
     {path: '/OwnerLogin',component: loadPage('OwnerLogin')},
     {path: '/About',component: loadPage('About')},
     {path:'/Groups',component: loadPage('Groups')},
-    {path:'/search',component: loadPage('Search')}
+    {path:'/search',component: loadPage('Search')},
+    {path: '/OAP',component: loadPage('OwnerAccountPage')},
 ]

@@ -1,164 +1,215 @@
 <template>
-  <div id="content-wrap">
-    <link rel="stylesheet" href="src/assets/bootstrap.css">
-    <link rel="stylesheet" href="src/assets/bootstrap-grid.css">
-    <link rel="stylesheet" href="src/assets/bootstrap-reboot.css">
 
-
-    <div class="container">
-      <div class="posts">
-        <div class="title mainFont">Your Matches</div>
-        <div class="col-sm" >
-          <div class="card" style="width: 18rem;">
-            <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fdownloadhdwallpapers.in%2Fwp-content%2Fuploads%2F2018%2F01%2FLuxury-Home-at-Night-1920x1200.jpg&f=1&nofb=1&ipt=c79a61f27097d9ee5784a87ae265dca2ee3d1207638bba8b19798f78b0b4b70c&ipo=images" class="card-img-top" alt="...">
-            <div class="card-body">
-              <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut </p>
-              <a href="/" target="_blank" style="#0f8fef : white">See More</a>
-            </div>
-
-          </div>
-        </div>
-        <div class="col-sm">
-          <div class="card" style="width: 18rem;">
-            <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fdownloadhdwallpapers.in%2Fwp-content%2Fuploads%2F2018%2F01%2FLuxury-Home-at-Night-1920x1200.jpg&f=1&nofb=1&ipt=c79a61f27097d9ee5784a87ae265dca2ee3d1207638bba8b19798f78b0b4b70c&ipo=images" class="card-img-top" alt="...">
-            <div class="card-body">
-              <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut </p>
-              <a href="/" target="_blank" style="#0f8fef: white">See More</a>
-            </div>
-
-          </div>
-        </div>
-        <div class="col-sm">
-          <div class="card" style="width: 18rem;">
-            <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fdownloadhdwallpapers.in%2Fwp-content%2Fuploads%2F2018%2F01%2FLuxury-Home-at-Night-1920x1200.jpg&f=1&nofb=1&ipt=c79a61f27097d9ee5784a87ae265dca2ee3d1207638bba8b19798f78b0b4b70c&ipo=images" class="card-img-top" alt="...">
-            <div class="card-body" >
-              <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut </p>
-              <a href="/" target="_blank" style="#0f8fef : white">See More</a>
-            </div>
-
-          </div>
-        </div>
-      </div>
-
-
-
-      <div class="messages">
-
-        <div class="row-cols-1">
-
-          <div class="col-sm-2">
-            <div class="message-card">
-              <div class="message-card-body">
-                <h5 class="card-title">Person Name</h5>
-                <h6 class="card-subtitle" style="font-size: 1em;">07/02/2023</h6>
-                <a href="#" class="card-link" style="color: white">Reply</a>
-                <a href="#" class="card-link" style="color: white">Block</a>
-              </div>
-            </div>
-          </div>
-          <div class="col-sm-2">
-            <div class="message-card">
-              <div class="message-card-body">
-                <h5 class="card-title">Person Name</h5>
-                <h6 class="card-subtitle" style="font-size: 1em;">07/02/2023</h6>
-                <a href="#" class="card-link" style="color: white">Reply</a>
-                <a href="#" class="card-link" style="color: white">Block</a>
-              </div>
-            </div>
-          </div>
-          <div class="col-sm-2">
-            <div class="message-card">
-              <div class="message-card-body">
-                <h5 class="card-title">Person Name</h5>
-                <h6 class="card-subtitle" style="font-size: 1em;">07/02/2023</h6>
-                <a href="#" class="card-link" style="color: white">Reply</a>
-                <a href="#" class="card-link" style="color: white">Block</a>
-              </div>
-            </div>
-          </div>
-          <div class="col-sm-2">
-            <div class="message-card">
-              <div class="message-card-body">
-                <h5 class="card-title">Person Name</h5>
-                <h6 class="card-subtitle" style="font-size: 1em;">07/02/2023</h6>
-                <a href="#" class="card-link" style="color: white">Reply</a>
-                <a href="#" class="card-link" style="color: white">Block</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+  <div class="fullPage">
+    <div  class="display-box" id="displayedLikes">
+    <div class="text-center" id="title-div">
+      <h2>Your Likes</h2>
     </div>
+    </div>
+    <div v-if="likedHouseArray.length > 0">
+      <ul>
+        <li v-for="(House , index)  in likedHouseArray" :key="index">
+          <div class="dispDiv">
+          <span>
+            <div class="card" style="width: 18rem;">
+              <div class="carousel slide" :id="carouselIndex(index)" data-bs-ride="carousel">
+      <div class="carousel-inner">
+        <div v-for="(image, imageIndex) in House.image" :key="imageIndex"
+             :class="['carousel-item', {active: imageIndex === House.index}]">
+          <img v-bind:src=image alt="Error Loading Image" class="d-block w-100"/>
+        </div>
+      </div>
+      <button class="carousel-control-prev" type="button" :data-bs-target="'#carousel' + index"
+              @click="showImage(House.index -  1, House)">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button class="carousel-control-next" type="button" :data-bs-target="'#carousel' + index"
+              @click="showImage(House.index + 1, House)">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
+            </div>
+              <div class="card-body">
+                <h5 class="card-title text-center"><span>{{ House.area }}</span></h5>
+                <p style="background-color: #f0f0f0; margin:5px;  padding: 5px;border-radius: 4px" class="card-text"><b>Description: <br></b><span>{{ House.description }}</span></p>
+                <p style="background-color: #f0f0f0; margin:5px; padding: 5px;border-radius: 4px" class="card-text"><b>Number of Beds: </b><span>{{ House.numBed }}</span></p>
+                <p style="background-color: #f0f0f0; margin:5px; padding: 5px;border-radius: 4px" class="card-text"><b>Number of Bathrooms: </b><span>{{ House.numBath }}</span></p>
+                <p style="background-color: #f0f0f0; margin:5px; padding: 5px;border-radius: 4px" class="card-text"><b>Rent (Monthly): </b>€<span>{{ House.mRent }}</span></p>
+                <p style="background-color: #f0f0f0; margin:5px; padding: 5px;border-radius: 4px" class="card-text"><b>Location: <br></b><span>{{ House.location }}</span></p>
 
   </div>
-  <footer id="footer">
-    <Footer/>
-  </footer>
+</div>
+          </span>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div class="divBig">
+      <div style="display: flex; flex-direction: column; align-items: center;">
+        <button type="button" id="logoutButt" class="btn btn-success" @click="logout()"><p class="mainFont"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-left" viewBox="0 0 16 16">
+          <path fill-rule="evenodd" d="M6 12.5a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v2a.5.5 0 0 1-1 0v-2A1.5 1.5 0 0 1 6.5 2h8A1.5 1.5 0 0 1 16 3.5v9a1.5 1.5 0 0 1-1.5 1.5h-8A1.5 1.5 0 0 1 5 12.5v-2a.5.5 0 0 1 1 0v2z"/>
+          <path fill-rule="evenodd" d="M.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L1.707 7.5H10.5a.5.5 0 0 1 0 1H1.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3z"/>
+        </svg> <b>Logout</b></p></button>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
+import { getFunctions, httpsCallable } from '@firebase/functions';
+import app from "@/api/firebase";
+import {getAuth, onAuthStateChanged, signOut} from "firebase/auth";
 export default {
-  name: "StudentAccount.vue"
-}
+  data(){
+    return{
+      handle: "",
+      user: null,
+      likedHouseArray:[],
+    }
+  },
+  computed: {
+    carouselIndex() {
+      return (index) => {
+        return `${'carousel'}${index}`;
+      };
+    },
+  },
+  created() {
+    // Check for logged in user
+    const auth = getAuth(app);
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        console.log("User", user);
+        this.user = user;
+        this.handle = user.email;
+        this.getGroupLikes();
+
+      } else {
+        console.log("No user found")
+        // User is not signed in
+      }
+
+    });
+  },
+  methods: {
+    getGroupLikes(){
+      const functions = getFunctions(app);
+      const getGroupLikes = httpsCallable(functions, "getgrouplikes");
+      getGroupLikes({ user: this.handle }).then((result) => {
+        let index = 0;
+        this.likedHouseArray = result.data.map(house => ({...house, index: 0}));
+      });
+    },
+    showImage(index, House) {
+      const length = House.image.length;
+      //console.log(House.image.length);
+      if (index == -1){
+        House.index = length -1;
+      }else {
+        House.index = Math.abs(index) % length;
+      }
+    },
+    logout(){
+      signOut(getAuth(app)).then(() => {
+// Send them back to the home page!
+        this.$router.push("/");
+      });
+    }
+  }
+};
 </script>
 <style scoped>
-.container{
-  margin-left: 0%;
-  position: relative;
-  height: 65vh;
-  width: 100vw;
+.card {
+  padding: 5px;
+  margin: 5px;
 }
-.posts{
-  padding: 0%;
-  position: relative;
+.divBig {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  text-align: center;
+  padding: 10px 0;
 }
-.messages{
-  position: relative;
+.fullPage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100%;
+  padding-bottom: 70px; /* Add some padding to the bottom */
+  font-size: .75em;
+  font-family: Roboto Slab, serif;
 }
-.card{
-  height: fit-content;
-  background-color:#790404;
-  padding: 0%;
-  margin: 1%;
+
+img {
+  border-radius: .25em;
 }
-.card-img-top{
-  border-radius: 5%;
-  padding:2%;
-}
-.title{
-  margin: auto;
-  padding-left: 5vw;
-  margin-top: 0px;
-  padding-top: 0px;
-  font-weight: bold;
-  font-size: 2em;
-}
-.title2{
-  font-size: 2em;
-}
-.card-title{
-  color: white;
-}
-.card-subtitle{
-  color: #0f8fef ;
-}
-.card-text{
-  color: white;
-}
-.message-card{
-  font-size:.8em;
-  margin: 2%;
-  background-color: #790404;
-  border-radius: 4%;
-  border: solid;
-}
-.col-sm{
+#displayedLikes {
+  display: table;
+  margin: 10px auto;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 5px 10px;
+  background-color: white;
   width: fit-content;
-  display: inline;
-  float: left;
 }
-.col-sm-2{
-  display: inline;
-  float: right;
+li {
+  width: fit-content;
+  object-fit: contain;
+  display: inline-block;
+  margin: 10px;
 }
+
+ul {
+  width: 100vw;
+  max-width: 100vw;
+  margin: 0;
+  padding: 0;
+
+}
+
+select {
+  background-color: #f0f0f0;
+  color: #888;
+}
+
+
+.carousel-item.active {
+  display: block;
+}
+
+.carousel-item:not(.active) {
+  display: none;
+}
+
+.carousel-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.carousel-item {
+  max-width: 300px;
+  max-height: 160px;
+}
+p{
+  margin-bottom: 0;
+}
+#logoutButt {
+  background-color: white;
+  border: 2px solid green;
+  color: green;
+  transition: all 0.25s ease-in-out;
+}
+
+#logoutButt:hover {
+  background-color: green;
+  border: 2px solid green;
+  color: white;
+}
+.carousel-control-prev, .carousel-control-next {
+  background-color: #10bd90; /* replace with your desired color */
+  border-color: #10bd90; /* replace with your desired color */
+}
+
 </style>
