@@ -488,7 +488,8 @@ exports.addLikes = functions.https.onRequest((request, response) => {
                     const groupLikesRef = admin.firestore().collection('GroupLikes').doc(`${groupId}_${houseId}`);
                     return groupLikesRef.set({
                         groupId: groupId,
-                        houseId: houseId
+                        houseId: houseId,
+                        email: null,
                     }).then(() => {
                         response.json({data: "Updated Document in Database"});
                     });
@@ -582,31 +583,50 @@ exports.getgrouplikes = functions.https.onRequest((request, response) => {
                         console.log('No matching documents.');
                         return;
                     }
-                    const houseIds = [];
+                    const houseIdsByEmail = {};
                     groupLikesSnapshot.forEach(groupLikeDoc => {
-                        houseIds.push(groupLikeDoc.data().houseId);
+                        const houseId = groupLikeDoc.data().houseId;
+                        const email = groupLikeDoc.data().email;
+                        if (!houseIdsByEmail[email]) {
+                            houseIdsByEmail[email] = [];
+                        }
+                        houseIdsByEmail[email].push(houseId);
                     });
-                    console.log("House IDs:", houseIds);
-                    const housePromises = houseIds.map(houseId => {
-                        return admin.firestore().collection('House').doc(houseId).get().then((houseDoc) => {
-                            if (!houseDoc.exists) {
-                                console.log('No such document!');
-                                return;
-                            }
-                            console.log(houseDoc.id, " => ", houseDoc.data());
-                            myData.push(houseDoc.data());
+                    console.log("House IDs by email:", houseIdsByEmail);
+
+                    const housePromises = [];
+                    for (const [email, houseIds] of Object.entries(houseIdsByEmail)) {
+                        const promises = houseIds.map(houseId => {
+                            return admin.firestore().collection('House').doc(houseId).get().then((houseDoc) => {
+                                if (!houseDoc.exists) {
+                                    console.log('No such document!');
+                                    return;
+                                }
+                                console.log(houseDoc.id, " => ", houseDoc.data());
+                                const houseData = houseDoc.data();
+                                houseData.email = email; // Add email property to house data object
+                                myData.push(houseData);
+                            });
                         });
-                    });
+                        housePromises.push(Promise.all(promises));
+                    }
                     return Promise.all(housePromises);
                 });
             });
             return Promise.all(groupLikesPromises).then(() => {
                 console.log("Data:", myData);
                 response.json({ data: myData });
+            }).catch(error => {
+                console.error(error);
+                response.status(500).send('Internal server error');
             });
-        })
+        }).catch(error => {
+            console.error(error);
+            response.status(500).send('Internal server error');
+        });
     });
 });
+
 
 
 exports.removelike = functions.https.onRequest((request, response) => {

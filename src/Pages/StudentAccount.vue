@@ -9,13 +9,13 @@
             <div :id="'carousel'+index" class="carousel slide">
             <div class="carousel-inner">
             <div class="carousel-item active">
-              <img v-bind:src="House.data.image" class="d-block w-100" alt="...">
+              <img v-bind:src="House.image" class="d-block w-100" alt="...">
             </div>
             <div class="carousel-item">
-              <img v-bind:src="House.data.image" class="d-block w-100" alt="...">
+              <img v-bind:src="House.image" class="d-block w-100" alt="...">
             </div>
             <div class="carousel-item">
-              <img v-bind:src="House.data.image" class="d-block w-100" alt="...">
+              <img v-bind:src="House.image" class="d-block w-100" alt="...">
             </div>
             </div>
               <button class="carousel-control-prev" type="button" :data-bs-target="'#carousel'+index" data-bs-slide="prev">
@@ -28,14 +28,20 @@
                 </button>
             </div>
               <div class="card-body">
-               <h5 class="card-title">Card title</h5>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                <h5 class="card-title"><span>{{House.location}}</span></h5>
+                <p class="card-text"><span>{{House.description}}</span></p>
+                <p class="card-text">Bed:<span>{{House.numBed}}</span></p>
+                <p class="card-text">Bathrooms:<span>{{House.numBath}}</span></p>
+                <p class="card-text">Monthly Rent:<span>{{House.mRent}}</span></p>
+                <p class="card-text" v-if="House.email != null">Landlord Email:<span>{{House.email}}</span></p>
+                <p class="card-text" v-else>Email has not been shared</p>
               </div>
             </div>
           </span>
         </div>
       </li>
     </ul>
+    <button @click="logout()">Logout</button>
   </div>
 
 
@@ -49,7 +55,7 @@
 <script>
 import { getFunctions, httpsCallable } from '@firebase/functions';
 import app from "@/api/firebase";
-import {getAuth, onAuthStateChanged} from "firebase/auth";
+import {getAuth, onAuthStateChanged, signOut} from "firebase/auth";
 export default {
   data(){
     return{
@@ -85,7 +91,12 @@ export default {
         console.log(this.handle);
         this.likedHouseArray = result.data;
       });
-
+    },
+    logout(){
+      signOut(getAuth(app)).then(() => {
+// Send them back to the home page!
+        this.$router.push("/");
+      });
     }
   }
 };

@@ -94,6 +94,7 @@
       <p>Password: {{this.password}}</p>
       <button type="submit">Save</button>
     </div>
+    <button @click="logout()">Logout</button>
   </div>
 </template>
 
@@ -106,7 +107,7 @@ const db = getFirestore(app);
 import 'firebase/storage';
 import 'firebase/functions';
 import {getStorage, ref, uploadBytesResumable, uploadBytes, getDownloadURL} from 'firebase/storage';
-import {getAuth, onAuthStateChanged} from "firebase/auth";
+import {getAuth, onAuthStateChanged, signOut} from "firebase/auth";
 export default {
   data() {
     return {
@@ -158,7 +159,7 @@ export default {
     fetchHouses() {
       const functions = getFunctions(app);
       const gethouses = httpsCallable(functions, 'gethouses');
-      gethouses({"user" : this.handle}).then((result) => {
+      gethouses({"user": this.handle}).then((result) => {
         this.houses = result.data;
         console.log(this.houses);
       });
@@ -166,7 +167,7 @@ export default {
     fetchLikes(houses) {
       const functions = getFunctions(app);
       const getLikes = httpsCallable(functions, 'getLikes');
-      for(let j=0;j<houses.length;j++) {
+      for (let j = 0; j < houses.length; j++) {
         getLikes({"houseId": houses[j].houseId}).then((result) => {
           const likes = result.data;
           this.numLikes.push(likes.length);
@@ -177,61 +178,56 @@ export default {
     addHouse() {
       const functions = getFunctions(app);
       const uploadHouse = httpsCallable(functions, 'uploadHouse');
-      const pictureURLArray = [];
-      const length = this.fileArray.length;
-      for (let i = 0; i < length; i++) {
+
+      // Create an array of promises that will resolve to the download URLs of the images
+      const uploadPromises = [];
+      for (let i = 0; i < this.fileArray.length; i++) {
         const storage = getStorage();
         const metadata = {
           contentType: 'image/jpeg'
         };
-        this.filePath = "images/";
-        const fileName = this.fileArray[i].name;
-        this.filePath += fileName;
-        const storageRef = ref(storage, this.filePath);
+        const filePath = "images/" + this.fileArray[i].name;
+        const storageRef = ref(storage, filePath);
         const uploadTask = uploadBytesResumable(storageRef, this.fileArray[i], metadata);
-        uploadTask.on('state_changed',
-            (snapshot) => {
-              const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-              //  console.log('upload is ' + progress + '% done');
-            },
-            (error) => {
-              console.error("Error uploading file: ", error);
-            },
-            () => {
-              // Upload completed successfully, now we can get the download URL
-              getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                // console.log('File available at', downloadURL);
-                pictureURLArray.push(downloadURL);
+
+        // Add the promise that will resolve to the download URL of the current image to the array
+        uploadPromises.push(
+            new Promise((resolve, reject) => {
+              uploadTask.on('state_changed', null, reject, () => {
+                getDownloadURL(uploadTask.snapshot.ref).then(resolve);
               });
-            }
+            })
         );
       }
-      // Wait for all the getDownloadURL promises to resolve before calling the uploadHouse function
-      Promise.all(pictureURLArray).then(() => {
-        // console.log("pictureURLArray is full");
+
+      // Wait for all the promises in the array to resolve
+      Promise.all(uploadPromises).then((downloadURLs) => {
+        // Call the uploadHouse function with the array of download URLs
         uploadHouse({
           "name": this.houseName,
           "location": this.location,
           "description": this.description,
           "numBed": this.numBed,
           "numBath": this.numBath,
-          "image": pictureURLArray,
+          "image": downloadURLs,
           "user": this.handle,
         }).then((result) => {
-          // console.log("House uploaded successfully");
+          console.log("House uploaded successfully");
           this.fetchHouses();
         }).catch((error) => {
           console.error("Error uploading house: ", error);
         });
+      }).catch((error) => {
+        console.error("Error uploading images: ", error);
       });
     },
-    saveSettings() {
-      // make an API request to save the updated account settings
-      // update this.name, this.email, and this.password with the new values
-    },
-    updatepicURL(id){
+    logout() {
+      signOut(getAuth(app)).then(() => {
+// Send them back to the home page!
+        this.$router.push("/");
+      });
     }
-  },
+  }
 };
 </script>
 

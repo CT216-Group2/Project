@@ -27,6 +27,7 @@
         <div>
           <p>Area:<span>{{Group.data.area}}</span></p>
           <p>Size:<span>{{Group.data.Maxsize}}</span></p>
+          <p>Size:<span>{{Group.data.members[0]}}</span></p>
         </div>
         <div v-if="Array.from(Group.data.members).includes(this.handle)">
           <button type="button" @click="leavegroup(Group.id,Group.data.size)" class="btn btn-danger">Leave Group</button>

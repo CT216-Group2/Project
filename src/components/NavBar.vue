@@ -22,7 +22,6 @@
                 <li v-if="isLoggedIn"><a class="dropdown-item mainFont"><router-link to="/OwnerAccount" class="black">Profile</router-link> </a></li>
                 <li v-if="!isLoggedIn"><a class="dropdown-item mainFont"><router-link to="/Login" class="black">Login</router-link></a></li>
                 <li v-if="!isLoggedIn"><a class="dropdown-item mainFont"><router-link to="/OwnerSignUp" class="black">Sign up</router-link> </a></li>
-                <li><a class="dropdown-item mainFont">><router-link @click="logout" to="/">Logout</router-link></a></li>
               </ul>
             </li>
           </ul>
