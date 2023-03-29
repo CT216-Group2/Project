@@ -405,3 +405,91 @@ exports.checkEmail = functions.https.onRequest((request, response) => {
         });
     });
 });
+
+exports.getgrouplikes = functions.https.onRequest((request, response) => {
+    cors(request, response, () => {
+        console.log("The request made it in here");
+        console.log(request.body.data.user);
+        console.log(request.body);
+        let myData = [];
+        const studentGroupQuery = admin.firestore().collection('StudentGroup').where('member', '==', request.body.data.user);
+        return studentGroupQuery.get().then((querySnapshot) => {
+            if (querySnapshot.empty) {
+                console.log('No matching documents.');
+                response.json({ data: { message: 'No data in database' } });
+                return;
+            }
+            const groupIds = [];
+            querySnapshot.forEach(doc => {
+                console.log(doc.data().groupId);
+                groupIds.push(doc.data().groupId);
+            });
+            console.log("Group IDs:", groupIds);
+            const groupLikesPromises = groupIds.map(groupId => {
+                return admin.firestore().collection('GroupLikes').where('groupId', '==', groupId).get().then((groupLikesSnapshot) => {
+                    if (groupLikesSnapshot.empty) {
+                        console.log('No matching documents.');
+                        return;
+                    }
+                    const houseIdsByEmail = {};
+                    groupLikesSnapshot.forEach(groupLikeDoc => {
+                        const houseId = groupLikeDoc.data().houseId;
+                        const email = groupLikeDoc.data().email;
+                        if (!houseIdsByEmail[email]) {
+                            houseIdsByEmail[email] = [];
+                        }
+                        houseIdsByEmail[email].push(houseId);
+                    });
+                    console.log("House IDs by email:", houseIdsByEmail);
+
+                    const housePromises = [];
+                    for (const [email, houseIds] of Object.entries(houseIdsByEmail)) {
+                        const promises = houseIds.map(houseId => {
+                            return admin.firestore().collection('House').doc(houseId).get().then((houseDoc) => {
+                                if (!houseDoc.exists) {
+                                    console.log('No such document!');
+                                    return;
+                                }
+                                console.log(houseDoc.id, " => ", houseDoc.data());
+                                const houseData = houseDoc.data();
+                                houseData.email = email; // Add email property to house data object
+                                myData.push(houseData);
+                            });
+                        });
+                        housePromises.push(Promise.all(promises));
+                    }
+                    return Promise.all(housePromises);
+                });
+            });
+            return Promise.all(groupLikesPromises).then(() => {
+                console.log("Data:", myData);
+                response.json({ data: myData });
+            }).catch(error => {
+                console.error(error);
+                response.status(500).send('Internal server error');
+            });
+        }).catch(error => {
+            console.error(error);
+            response.status(500).send('Internal server error');
+        });
+    });
+});
+
+exports.checkgroup = functions.https.onRequest((request, response) => {
+
+    cors(request, response, () => {
+
+        console.log("The request made it in here");
+        return admin.firestore().collection('StudentGroup').where('member','==',request.body.data.user).get().then((snapshot) => {
+
+            if (snapshot.empty) {
+                response.json({data:false});
+                return;
+            }
+
+            snapshot.forEach(doc => {
+                response.json({data:true});
+            });
+        });
+    });
+});

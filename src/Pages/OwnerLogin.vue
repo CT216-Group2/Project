@@ -70,7 +70,7 @@ export default {
         if(result.data.includes(this.email)){
           console.log("Wrong Login Page");
         }else{
-          this.$router.push({path: '/OwnerAccount'});
+          this.$router.push({path: '/OwnerAccountPage'});
         }
       });
     }

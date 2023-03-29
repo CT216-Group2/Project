@@ -33,7 +33,7 @@ export default [
     {path: '/StudentLogin',component: loadPage('StudentLogin')},
     {path: '/OwnerLogin',component: loadPage('OwnerLogin')},
     {path: '/About',component: loadPage('About')},
-    {path:'/Groups',component: loadPage('Groups')},
-    {path:'/search',component: loadPage('Search')},
-    {path: '/OAP',component: loadPage('OwnerAccountPage')},
+    {path:'/Groups',component: loadPage('Groups'), beforeEnter:isAuth},
+    {path:'/search',component: loadPage('Search'), beforeEnter:isAuth},
+    {path: '/OwnerAccountPage',component: loadPage('OwnerAccountPage'), beforeEnter:isAuth},
 ]
