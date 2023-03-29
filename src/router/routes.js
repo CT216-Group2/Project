@@ -33,5 +33,6 @@ export default [
     {path: '/OwnerLogin',component: loadPage('OwnerLogin')},
     {path: '/test',component: loadPage('Testing2')},
     {path: '/OAP',component: loadPage('OwnerAccountPage')},
+    {path: '/t',component: loadPage('Login')},
 
 ]

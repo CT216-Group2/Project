@@ -31,20 +31,33 @@
           </li>
           <li class="nav-item dropdown fontMain">
             <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Account
+              Student
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
               <li>
-                <router-link to="/" class="dropdown-item fontMainDropdown">Home</router-link>
+                <router-link to="/" class="dropdown-item fontMainDropdown">Profile</router-link>
+              </li>
+              <li>
+                <router-link to="/StudentLogin" class="dropdown-item fontMainDropdown">Log In</router-link>
+              </li>
+              <li v-if="this.$LoggedIn">
+                <router-link to="/StudentSignUp" class="dropdown-item fontMainDropdown">Sign Up</router-link>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item dropdown fontMain">
+            <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Landlord
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <li>
+                <router-link to="/OAP" class="dropdown-item fontMainDropdown">Profile</router-link>
               </li>
               <li>
                 <router-link to="/StudentLogin" class="dropdown-item fontMainDropdown">Log In</router-link>
               </li>
               <li>
                 <router-link to="/StudentSignUp" class="dropdown-item fontMainDropdown">Sign Up</router-link>
-              </li>
-              <li>
-                <a class="dropdown-item" @click="logout">Log Out</a>
               </li>
             </ul>
           </li>
@@ -73,37 +86,17 @@ export default
   ,
   created (){
 // Check if the user is logged in
-    const auth = getAuth
-        (app
-        )
-    ;
+    const auth = getAuth(app);
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        console
-            .log(user)
-        ;
+        console.log(user);
         this.isLoggedIn = true;
-      } else
-      {
+      } else {
         this.isLoggedIn = false;
       }
-    })
-    ;
-  }
-  ,
-  methods : {
-    logout(){
-      signOut
-      (getAuth
-      (app)).then(() => {
-// Send them back to the home page!
-        this.$router.push("/"
-        )
-        ;
-      })
-      ;
-    }
-  }
+    });
+  },
+
 }
 
 </script>

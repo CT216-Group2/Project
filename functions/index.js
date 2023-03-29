@@ -202,7 +202,32 @@ exports.uploadHouse = functions.https.onRequest((request, response) => {
         })
     });
 });
+exports.checkEmail = functions.https.onRequest((request, response) => {
 
+    cors(request, response, () => {
+        // 1. Connect to our Firestore database
+        console.log("The request made it in here");
+        let myData = [];
+        return admin.firestore().collection('Student').orderBy('data.timestamp').get().then((snapshot) => {
+
+            if (snapshot.empty) {
+                console.log('No matching documents.');
+                response.json({data: {message : 'No data in database'}});
+                return;
+            }
+
+            snapshot.forEach(doc => {
+                console.log(doc.id);
+                const email = doc.data().data.email;
+                myData.push(email);
+            });
+            console.log(myData);
+
+            // 2. Send data back to client
+            response.json({data: myData});
+        });
+    });
+});
 exports.getLikes = functions.https.onRequest((request, response) => {
 
     cors(request, response, () => {

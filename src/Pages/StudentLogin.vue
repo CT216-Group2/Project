@@ -13,16 +13,15 @@
       <input class="inputone" v-model="email" type="email" placeholder="Email" required autofocus >
 
       <input class="inputone" v-model="password" style="margin-top: 15px; margin-bottom: 15px;" type="password" placeholder="Password">
-      <div class="mt-2">
-        <div>Remember Me?</div>
-        <div class="mt-2"><input type="checkbox"></div>
-      </div>
+
 
 
 
 
       <button  @click="login" class="btn btn-lg btn-primary btn-block mt-5">LOG IN</button>
-
+      <br>
+      <span class="forgot-password-link" @click.prevent="sendPasswordEmail()">Forgot Password?</span>
+      <span class="sign-up-link" @click="this.$router.push({path: '/OwnerSignUp'})">Don't have an account? Sign Up Here!</span>
 
 
     </form>
@@ -32,7 +31,8 @@
 </template>
 <script>
 import app from "../api/firebase"
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import {getAuth, sendPasswordResetEmail, signInWithEmailAndPassword} from "firebase/auth";
+import {getFunctions, httpsCallable} from "firebase/functions";
 export default {
   name: "StudentLogin",
   data() {
@@ -55,6 +55,33 @@ export default {
         console.log(errorCode)
         console.log(errorMessage)
       });
+    },
+
+    checkEmail(){
+      const functions = getFunctions(app);
+      const checkEmail = httpsCallable(functions, 'checkEmail');
+      checkEmail().then((result) => {
+        console.log(result.data);
+        if(result.data.includes(this.email)){
+          console.log("Wrong Login Page");
+        }else{
+          this.$router.push({path: '/OwnerAccount'});
+        }
+      });
+    },
+
+    sendPasswordEmail(){
+      const auth = getAuth();
+      sendPasswordResetEmail(auth, this.email)
+          .then(() => {
+            // Password reset email sent!
+            // ..
+          })
+          .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            // ..
+          });
     }
   }
 }
@@ -199,5 +226,23 @@ label{
   opacity: 1;
   pointer-events: none;
 }
+
+.forgot-password-link {
+  color: rgb(16, 152, 197);
+  text-decoration: underline;
+  cursor: pointer;
+}
+.forgot-password-link:hover {
+  text-decoration: none;
+}
+.sign-up-link{
+  color: rgb(16, 152, 197);
+  text-decoration: underline;
+  cursor: pointer;
+}
+.sign-up-link:hover{
+  text-decoration: none;
+}
+
 
 </style>
