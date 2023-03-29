@@ -21,54 +21,34 @@
           >
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id = "navbarone">
-          <ul class="navbar-nav">
-            <li class="nav-item active fontMain">
-              <a href="#" class="nav-link active">
-                <router-link to="/" class="fontMain">Home</router-link>
-              </a>
-            </li>
-            <li class="nav-item active fontMain">
-              <a href="#" class="nav-link active">
-                <router-link to="/" class="fontMain" >About</router-link>
-              </a>
-            </li>
-            <li class="nav-item dropdown fontMain">
-              <a href="#"
-                 class="nav-link dropdown-toggle"
-                 id="navbarDropdown" role="button"
-                 data-bs-toggle="dropdown"
-                 aria-expanded="false" >
-                Account
-                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                  <li>
-                    <a href="#"
-                      class="dropdown-item">
-                      <router-link to="/" class="fontMainDropdown">Home</router-link>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" class="dropdown-item">
-                      <router-link to="/StudentLogin" class="fontMainDropdown">Log In</router-link>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" class="dropdown-item">
-                      <router-link to="/StudentSignUp" class="fontMainDropdown">Sign Up</router-link>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" class="dropdown-item">
-                      Log Out
-                    </a>
-                  </li>
-                </ul>
-
-
-              </a>
-
-            </li>
-          </ul>
+      <div class="collapse navbar-collapse" id="navbarone">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item active fontMain">
+            <router-link to="/" class="nav-link active fontMain">Home</router-link>
+          </li>
+          <li class="nav-item active fontMain">
+            <router-link to="/" class="nav-link active fontMain">About</router-link>
+          </li>
+          <li class="nav-item dropdown fontMain">
+            <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Account
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <li>
+                <router-link to="/" class="dropdown-item fontMainDropdown">Home</router-link>
+              </li>
+              <li>
+                <router-link to="/StudentLogin" class="dropdown-item fontMainDropdown">Log In</router-link>
+              </li>
+              <li>
+                <router-link to="/StudentSignUp" class="dropdown-item fontMainDropdown">Sign Up</router-link>
+              </li>
+              <li>
+                <a class="dropdown-item" @click="logout">Log Out</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
       </div>
     </nav>
   </div>

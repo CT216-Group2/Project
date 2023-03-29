@@ -4,7 +4,7 @@
     <div class="details">
       <div class="detail_left">
         <div class = "pd-row">
-          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-person-bounding-box" viewBox="0 0 40 40">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-bounding-box" viewBox="0 0 16 16">
             <path d="M1.5 1a.5.5 0 0 0-.5.5v3a.5.5 0 0 1-1 0v-3A1.5 1.5 0 0 1 1.5 0h3a.5.5 0 0 1 0 1h-3zM11 .5a.5.5 0 0 1 .5-.5h3A1.5 1.5 0 0 1 16 1.5v3a.5.5 0 0 1-1 0v-3a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 1-.5-.5zM.5 11a.5.5 0 0 1 .5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 1 0 1h-3A1.5 1.5 0 0 1 0 14.5v-3a.5.5 0 0 1 .5-.5zm15 0a.5.5 0 0 1 .5.5v3a1.5 1.5 0 0 1-1.5 1.5h-3a.5.5 0 0 1 0-1h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 1 .5-.5z"/>
             <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm8-9a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
           </svg>
@@ -28,22 +28,11 @@
       <form>
         <div class="form-group">
           <label for="groupName">House Name</label>
-          <input  class="form-control" id="groupName" v-model="houseName" placeholder="Location...">
+          <input  class="form-control" id="groupName" v-model="houseName" placeholder="Name...">
         </div>
         <div class="form-group">
           <label for="size">Location</label>
-          <input  class="form-control" id="size" v-model="location" placeholder="Number of members...">
-        </div>
-        <div class="form-group">
-        <div class="input-group mb-3">
-          <div class="select-wrapper">
-            <select v-model="selectedArea">
-              <option value="" disabled>Please select an area</option>
-              <option v-for="area in areas" :key="area" :value="area">{{ area }}</option>
-            </select>
-            <div v-if="!selectedArea" class="prompt-text">Area</div>
-          </div>
-        </div>
+          <input  class="form-control" id="size" v-model="location" placeholder="Enter a location ...">
         </div>
         <div class="form-group">
           <label for="size">Description</label>
@@ -58,9 +47,10 @@
           <input  class="form-control" id="size" v-model="numBath" placeholder="eg. 2...">
         </div>
         <div class="form-group">
-          <label for="size">Monthly Rent Price</label>
-          <input  class="form-control" id="size" v-model="mRent" placeholder="eg. 2...">
+          <label for="size">Monthly Rent</label>
+          <input  class="form-control" id="size" v-model="mRent" placeholder="eg. 800.">
         </div>
+
         <div>
           <input type="file" id="file" multiple="multiple" v-on:change="fileArray=$event.target.files" >
           hello
@@ -70,6 +60,7 @@
         <button type="button" class="btn btn-secondary" @click.prevent="hide('createPopup')">Cancel</button>
       </form>
     </div>
+
 
     <div class="popup" id="createLikesPopup">
       <form>
@@ -87,8 +78,19 @@
             </li>
           </ul>
         </div>
+        <br>
+        <button type="submit" class="btn btn-primary" @click.prevent="addHouse();hide('createPopup')">Submit</button>
+        <button type="button" class="btn btn-secondary" @click.prevent="hide('createPopup')">Cancel</button>
       </form>
+
     </div>
+    <form v-if="showHouseForm">
+      <h2>
+        Add a New House
+      </h2>
+    </form>
+
+
 
 
     <h2>My Houses</h2>
@@ -107,8 +109,6 @@
               <p class="card-text">Bathrooms: {{ house.numBath }}</p>
               <p class="card-text" >Likes: {{house.numlikes}}</p>
               <a @click.prevent=" fetchLikes(house.id);show('createLikesPopup'); this.currenthouseId=house.id" style="#0f8fef : white">See Likes</a>
-              <br>
-              <a @click.prevent=" deleteHouse(house.id);" style="#0f8fef : white">Delete House</a>
             </div>
           </div>
 
@@ -123,6 +123,7 @@
       <button type="submit">Save</button>
     </div>
   </div>
+
 </template>
 
 <script>
@@ -156,11 +157,9 @@ export default {
       filePath: "images/",
       handle:'',
       user:null,
-      areas: ["Knocknacarra","Rahoon","Dangan","Newcastle","Shantalla","Salthill","Claddagh","TerryLand","WellPark","Ballybane","Murrough","Ballybrit","Roscam","Doughiska"],
+      mRent:'',
       groups:[],
-      counter:-1,
-      mRent:0,
-      selectedArea:'',
+      URLArray:[],
       currenthouseId: ''
     };
   },
@@ -172,16 +171,12 @@ export default {
         this.user = user;
         this.handle = user.email;
         this.fetchHouses();
-        this.fetchLikes(this.houses);
         // User is signed in
       } else {
         //console.log("No user found")
         // User is not signed in
       }
     });
-    // fetch houses and likes data from an API
-
-    // this.fetchLikes();
   },
   methods: {
     shareContactDetails(groupId){
@@ -205,7 +200,6 @@ export default {
       document.getElementById(id).style.display = 'none';
     },
     fetchHouses() {
-      console.log("running");
       const functions = getFunctions(app);
       const gethouses = httpsCallable(functions, 'gethouses');
       gethouses({"user" : this.handle}).then((result) => {
@@ -258,9 +252,6 @@ export default {
           "numBath": this.numBath,
           "image": downloadURLs,
           "user": this.handle,
-          "numlikes": 0,
-          "mRent":this.mRent,
-          "area":this.selectedArea
         }).then((result) => {
           console.log("House uploaded successfully");
           this.fetchHouses();
@@ -271,16 +262,10 @@ export default {
         console.error("Error uploading images: ", error);
       });
     },
-    deleteHouse(id){
-      console.log(id);
-      const functions = getFunctions(app);
-      const deleteHouse = httpsCallable(functions, 'deleteHouse');
-      deleteHouse({houseId:id}).then((result) => {
-        console.log(result.data);
-        if(result.data == "Document successfully deleted")
-          this.fetchHouses();
-      }); // To refresh the client
-    },
+
+
+
+
 
   },
 };
@@ -334,4 +319,5 @@ export default {
   justify-content: space-between;
 }
 </style>
+
 

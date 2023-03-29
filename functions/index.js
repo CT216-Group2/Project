@@ -4,13 +4,7 @@ const cors = require('cors')({origin:true});
 
 admin.initializeApp();
 
-// // Create and Deploy Your First Cloud Functions
-// // https://firebase.google.com/docs/functions/write-firebase-functions
-//
-exports.helloWorld = functions.https.onRequest((request, response) => {
-    functions.logger.info("Hello logs!", {structuredData: true});
-    response.send("Hello from Firebase again!");
-});
+
 
 exports.isLoggedIn = functions.https.onRequest((request, response) => {
     functions.logger.info("Hello logs!", {structuredData: true});
@@ -20,20 +14,6 @@ exports.isLoggedIn = functions.https.onRequest((request, response) => {
 exports.echo = functions.https.onRequest((request, response) => {
     functions.logger.info("Hello logs!", {structuredData: true});
     response.send("The data passed in is " + request.query.data);
-});
-
-
-exports.postcomment = functions.https.onRequest((request, response) => {
-// 1. Receive comment data in here from user POST request
-// 2. Connect to our Firestore database
-cors(request, response, () => {
-    const currentTime = admin.firestore.Timestamp.now();
-    request.body.data.timestamp = currentTime;
-
-    return admin.firestore().collection('comments').add(request.body).then(() => {
-        response.json({data: "Saved in the database"});
-    });
-});
 });
 
 exports.poststudent = functions.https.onRequest((request, response) => {
@@ -149,15 +129,7 @@ exports.uploadImage = functions.https.onRequest((request, response) =>{
     });
 });
 
-exports.postURL = functions.https.onRequest((request, response) => {
 
-    cors(request, response, () => {
-
-        return admin.firestore().collection('Houses').doc('Houses', 'xcU9PcJAlGgqq5c5uKJu').update(request.body.data.image).then(() => {
-            response.json({data: "Updated document in database"});
-        });
-    });
-});
 
 exports.gethouses = functions.https.onRequest((request, response) => {
 
@@ -211,6 +183,9 @@ exports.uploadHouse = functions.https.onRequest((request, response) => {
             numBed: request.body.data.numBed,
             numBath: request.body.data.numBath,
             image: request.body.data.image, // Save the image array as a field in the document
+            numlikes: request.body.data.numlikes,
+            mRent: request.body.data.mRent,
+            area:request.body.data.area,
             user: landlord
         };
         return admin.firestore().collection('House').add(houseData).then((docRef) => {
@@ -228,29 +203,17 @@ exports.uploadHouse = functions.https.onRequest((request, response) => {
     });
 });
 
-
-exports.updateLikes = functions.https.onRequest((request, response) => {
-    cors(request, response, () => {
-        const id = request.body.data.id;
-        const image = request.body.data.image
-        console.log("This is the body" + request.body.data);
-        return admin.firestore().collection('House').doc(id).update({
-            "data.image" : image
-        }).then(() => {
-            response.json({data: "Updated document in database"});
-        });
-    });
-});
 exports.getLikes = functions.https.onRequest((request, response) => {
 
     cors(request, response, () => {
         // 1. Connect to our Firestore database
         console.log("The request made it in here");
-        const houseID = request.body.data.houseId;
-        console.log(houseID);
+        console.log()
+        const houseId = request.body.data.houseId;
+        console.log(houseId);
         let myData = [];
 
-        return admin.firestore().collection('GroupLikes').where('houseId', '==', houseID).get().then((snapshot) => {
+        return admin.firestore().collection('GroupLikes').where('houseId', '==', houseId).get().then((snapshot) => {
 
             if (snapshot.empty) {
                 console.log('No matching documents.');
@@ -262,12 +225,12 @@ exports.getLikes = functions.https.onRequest((request, response) => {
             snapshot.forEach(doc => {
                 console.log(doc.id);
                 const groupId = doc.data().groupId;
-                promises.push(admin.firestore().collection('House').doc(groupId).get());
+                promises.push(admin.firestore().collection('Groups').doc(groupId).get());
             });
 
             Promise.all(promises).then((groupDocs) => {
                 groupDocs.forEach((groupDoc) => {
-                    myData.push(Object.assign(groupDoc.data(), {id: groupDocs.id}));
+                    myData.push(Object.assign(groupDoc.data(), {id: groupDoc.id}));
                 });
                 console.log(myData);
 
@@ -280,3 +243,54 @@ exports.getLikes = functions.https.onRequest((request, response) => {
         });
     });
 });
+
+exports.updatedetails = functions.https.onRequest((request, response) => {
+    cors(request, response, () => {
+        const groupId = request.body.data.groupId;
+        const owneremail = request.body.data.email;
+        const hId = request.body.data.houseId;
+        const docRef = `${groupId}_${hId}`;
+        console.log(docRef);
+                const groupLikesRef = admin.firestore().collection('GroupLikes').doc(docRef);
+
+                return groupLikesRef.update({
+                    email: owneremail
+                }).then(() => {
+                    response.json({ data: "Updated Document in Database" });
+                });
+
+    });
+});
+
+
+exports.deleteHouse = functions.https.onRequest((request, response) => {
+    cors(request, response, () => {
+        const houseId = request.body.data.houseId;
+        console.log(houseId);
+
+        const deleteGLQuery = admin.firestore().collection("GroupLikes").where('houseId', '==', houseId);
+        return deleteGLQuery.get().then((querySnapshot) => {
+
+            const deleteBatch = admin.firestore().batch();
+            querySnapshot.forEach((doc) => {
+                deleteBatch.delete(doc.ref);
+            });
+            return deleteBatch.commit().then(() => {
+                const deleteQuery = admin.firestore().collection("LandlordHouse").where('houseId', '==', houseId);
+                return deleteQuery.get().then((querySnapshot) => {
+                    console.log(querySnapshot.docs[0].data());
+                    const lHouseId = querySnapshot.docs[0].id;
+                    const lHouseRef = admin.firestore().collection('LandlordHouse').doc(lHouseId);
+                    return lHouseRef.delete().then(() => {
+                        admin.firestore().collection("House").doc(houseId).delete().then(() => {
+                            response.json({data: "Document successfully deleted"});
+                        });
+                    });
+                });
+            });
+        });
+    });
+});
+
+
+
