@@ -1,6 +1,6 @@
 <template xmlns="http://www.w3.org/1999/html">
   <div>
-    <nav class="navbar fixed-top navbar navbar-expand-lg navbar-dark mainColour"  data-bs-theme="light" >
+    <nav class="navbar fixed-top navbar-expand-lg navbar-dark mainColour"  data-bs-theme="light" >
       <h1 class="navbar-brand mb-0 h1">
 
         <h1 class="logoFont1" href="#">
@@ -40,18 +40,18 @@
               <li>
                 <router-link to="/StudentLogin" class="dropdown-item fontMainDropdown">Log In</router-link>
               </li>
-              <li v-if="this.$LoggedIn">
+              <li>
                 <router-link to="/StudentSignUp" class="dropdown-item fontMainDropdown">Sign Up</router-link>
               </li>
             </ul>
           </li>
           <li class="nav-item dropdown fontMain">
             <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Landlord
+              Account
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
               <li>
-                <router-link to="/OAP" class="dropdown-item fontMainDropdown">Profile</router-link>
+                <router-link to="/" class="dropdown-item fontMainDropdown">Profile</router-link>
               </li>
               <li>
                 <router-link to="/StudentLogin" class="dropdown-item fontMainDropdown">Log In</router-link>
