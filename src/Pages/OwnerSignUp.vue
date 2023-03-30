@@ -1,8 +1,9 @@
 <template>
-  <v-container>
+  <v-container class="fullPage">
     <v-row justify="center">
       <v-col cols="12" sm="8" md="4">
         <v-form ref="form" v-model="valid">
+          <h1 style="text-align: center;">Owner Sign Up</h1>
           <v-text-field
               v-model="name"
               :rules="nameRules"
@@ -24,24 +25,21 @@
               label="Password"
               required
           ></v-text-field>
+
           <v-btn color="#790404" @click="register" :disabled="!valid"><a class="mainFont text-white">Sign Up</a></v-btn>
+          <br>
+          <span class="login-link" @click="this.$router.push({path: '/OwnerLogin'})">Already have an account? Log In Here!</span>
 
         </v-form>
       </v-col>
     </v-row>
   </v-container>
-  <div class="alert alert-danger alert-dismissible fade show"  id="createPopup" role="alert">
-    <strong>Authentication Failed!</strong> USer already exists please check details
-    <button type="button" class="close" data-dismiss="alert" @click="hide('createPopup')" aria-label="Close">
-    </button>
-  </div>
 </template>
 
 <script>
 import {getFunctions, httpsCallable} from "firebase/functions";
 import app from "@/api/firebase";
-import {createUserWithEmailAndPassword, getAuth} from "firebase/auth";
-
+import {createUserWithEmailAndPassword, getAuth, sendEmailVerification} from "firebase/auth";
 export default {
   data(){
     return{
@@ -50,9 +48,10 @@ export default {
       email: "",
       password: "",
       showPassword: false,
+      area: "",
       nameRules: [
         v => !!v || "Name is required",
-        v => v.length <= 25 || "Name must be less than 25 characters"
+        v => v.length <= 20 || "Name must be less than 20 characters"
       ],
       emailRules: [
         v => !!v || "Email is required",
@@ -65,12 +64,6 @@ export default {
     };
   },
   methods: {
-    show(id) {
-      document.getElementById(id).style.display = 'block';
-    },
-    hide(id) {
-      document.getElementById(id).style.display = 'none';
-    },
     postOwner() {
       const functions = getFunctions(app);
       const postOwner = httpsCallable(functions, 'postowner');
@@ -86,6 +79,11 @@ export default {
             console.log(user)
             this.postOwner();
             this.$router.push({path: '/OwnerAccount'})
+            sendEmailVerification(user)
+                .then(() => {
+                  // Email verification sent!
+                  // ...
+                });
 // ...
           })
           .catch((error) => {
@@ -93,7 +91,7 @@ export default {
             const errorMessage = error.message;
             console.log(errorCode)
             console.log(errorMessage)
-            this.show('createPopup');
+// ..
           });
     }
   }
@@ -101,7 +99,15 @@ export default {
 </script>
 
 <style scoped>
-.alert{
-  display: none;
+.fullPage{
+  font-family: Roboto Slab, serif;
+}
+.login-link{
+  color: rgb(16, 152, 197);
+  text-decoration: underline;
+  cursor: pointer;
+}
+.login-link:hover{
+  text-decoration: none;
 }
 </style>
