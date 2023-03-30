@@ -1,9 +1,11 @@
 <template>
 
-  <v-container>
+
+  <v-container class="fullPage">
     <v-row justify="center">
       <v-col cols="12" sm="8" md="4">
         <v-form ref="form" v-model="valid">
+          <h1 style="text-align: center;">Student Sign Up</h1>
           <v-text-field
               v-model="name"
               :rules="nameRules"
@@ -48,7 +50,9 @@
               label="Year of Study"
               required
           ></v-text-field>
-          <v-btn color="#790404" @click="register" :disabled="!valid"><a class="mainColour mainFont">Sign Up</a></v-btn>
+          <v-btn color="#790404" @click="register" :disabled="!valid"><a class="text-white ">Sign Up</a></v-btn>
+          <br>
+          <span class="login-link" @click="this.$router.push({path: '/StudentLogin'})">Already have an account? Log In Here!</span>
         </v-form>
       </v-col>
     </v-row>
@@ -56,10 +60,9 @@
 </template>
 
 <script>
-
 import app from '../api/firebase';
 import { getFunctions, httpsCallable } from "firebase/functions";
-import {createUserWithEmailAndPassword, getAuth} from "firebase/auth";
+import {createUserWithEmailAndPassword, getAuth, sendEmailVerification} from "firebase/auth";
 export default{
   name: "StudentSignUp",
   data() {
@@ -97,7 +100,6 @@ export default{
         v => !!v || "Year of study is required",
         v => /^[0-9]+$/.test(v) || "Year of study must be a number"
       ]
-
     };
   },
   methods: {
@@ -116,6 +118,13 @@ export default{
             console.log(user)
             this.postStudent();
             this.$router.push({path: '/StudentAccount'})
+
+            sendEmailVerification(user)
+                .then(() => {
+                  // Email verification sent!
+                  // ...
+                });
+
 // ...
           })
           .catch((error) => {
@@ -125,10 +134,22 @@ export default{
             console.log(errorMessage)
 // ..
           });
-    }
+    },
+
+
   }}
 </script>
 
 <style scoped>
-
+.login-link{
+  color: rgb(16, 152, 197);
+  text-decoration: underline;
+  cursor: pointer;
+}
+.login-link:hover{
+  text-decoration: none;
+}
+.fullPage{
+  font-family: Roboto Slab, serif;
+}
 </style>

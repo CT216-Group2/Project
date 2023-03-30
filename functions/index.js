@@ -51,13 +51,7 @@ exports.poststudent = functions.https.onRequest((request, response) => {
 });
 
 exports.postowner = functions.https.onRequest((request, response) => {
-// 1. Receive comment data in here from user POST request
-// 2. Connect to our Firestore database
     cors(request, response, () => {
-        const currentTime = admin.firestore.Timestamp.now();
-        request.body.data.timestamp = currentTime;
-
-
         return admin.firestore().collection('Landlord').add(request.body).then(() => {
             response.json({data: "Saved in the database"});
         });
@@ -199,7 +193,6 @@ exports.joingroup = functions.https.onRequest((request, response) => {
         const newMember = request.body.data.member;
         const newSize = request.body.data.size + 1;
         const groupId = request.query.id;
-        const currentTime = admin.firestore.Timestamp.now();
 
         let existingDocRef;
 
@@ -229,7 +222,6 @@ exports.joingroup = functions.https.onRequest((request, response) => {
                 const newMemberData = {
                     member: newMember,
                     groupId: groupId,
-                    timestamp: currentTime
                 };
                 if (existingDocRef) {
                     // Member already exists, so update the existing document in the "StudentGroup" collection
@@ -315,6 +307,540 @@ exports.checkEmail = functions.https.onRequest((request, response) => {
 
             // 2. Send data back to client
             response.json({data: myData});
+        });
+    });
+});
+
+
+
+exports.uploadImage = functions.https.onRequest((request, response) =>{
+    cors(request, response,  () => {
+
+        return admin.firestore().collection('Images').add(request.body).then(() => {
+            response.json({data: "Saved in the database"});
+        });
+    });
+});
+
+exports.postURL = functions.https.onRequest((request, response) => {
+
+    cors(request, response, () => {
+
+        return admin.firestore().collection('Houses').doc('Houses', 'xcU9PcJAlGgqq5c5uKJu').update(request.body.data.image).then(() => {
+            response.json({data: "Updated document in database"});
+        });
+    });
+});
+
+exports.uploadHouse = functions.https.onRequest((request, response) => {
+    cors(request, response, () => {
+        console.log(request.body);
+        const landlord = request.body.data.user;
+        const houseData = {
+            name: request.body.data.name,
+            location: request.body.data.location,
+            description: request.body.data.description,
+            numBed: request.body.data.numBed,
+            numBath: request.body.data.numBath,
+            image: request.body.data.image, // Save the image array as a field in the document
+            user: landlord
+        };
+        return admin.firestore().collection('House').add(houseData).then((docRef) => {
+            const newHouseData = {
+                user: landlord,
+                houseId: docRef.id
+            };
+            return admin.firestore().collection('LandlordHouse').add(newHouseData);
+        }).then(() => {
+            response.json({data: "Saved in the database"});
+        }).catch((error) => {
+            console.error("Error adding document: ", error);
+            response.status(500).send("Error adding document: ", error);
+        })
+    });
+});
+
+
+
+exports.updateImage = functions.https.onRequest((request, response) => {
+    cors(request, response, () => {
+        const id = request.body.data.id;
+        const image = request.body.data.image
+        console.log("This is the body" + request.body.data);
+        return admin.firestore().collection('House').doc(id).update({
+            "data.image" : image
+        }).then(() => {
+            response.json({data: "Updated document in database"});
+        });
+    });
+});
+
+exports.updateLikes = functions.https.onRequest((request, response) => {
+    cors(request, response, () => {
+        const id = request.body.data.id;
+        const image = request.body.data.image
+        console.log("This is the body" + request.body.data);
+        return admin.firestore().collection('House').doc(id).update({
+            "data.image" : image
+        }).then(() => {
+            response.json({data: "Updated document in database"});
+        });
+    });
+});
+exports.getLikes = functions.https.onRequest((request, response) => {
+
+    cors(request, response, () => {
+        // 1. Connect to our Firestore database
+        console.log("The request made it in here");
+        const houseID = request.body.data.houseId;
+        console.log(houseID);
+        let myData = [];
+
+        return admin.firestore().collection('GroupLikes').where('houseId', '==', houseID).get().then((snapshot) => {
+
+            if (snapshot.empty) {
+                console.log('No matching documents.');
+                response.json({data: {message : 'No data in database'}});
+                return;
+            }
+
+            let promises = [];
+            snapshot.forEach(doc => {
+                console.log(doc.id);
+                const groupId = doc.data().groupId;
+                promises.push(admin.firestore().collection('House').doc(groupId).get());
+            });
+
+            Promise.all(promises).then((groupDocs) => {
+                groupDocs.forEach((groupDoc) => {
+                    myData.push(Object.assign(groupDoc.data(), {id: groupDocs.id}));
+                });
+                console.log(myData);
+
+                // 2. Send data back to client
+                response.json({data: myData});
+            }).catch((error) => {
+                console.log("Error getting house documents:", error);
+                response.json({data: {message : 'Error getting house documents'}});
+            });
+        });
+    });
+});
+
+exports.addLikes = functions.https.onRequest((request, response) => {
+    cors(request, response, () => {
+        const studentGroupQuery = admin.firestore().collection('StudentGroup').where('member', '==', request.body.data.user);
+        return studentGroupQuery.get().then((querySnapshot) => {
+            if (querySnapshot.empty) {
+                response.status(404).send(`StudentGroup not found for user ${request.body.data.user}`);
+            } else {
+                const groupId = querySnapshot.docs[0].data().groupId;
+                const houseId = request.body.data.houseId;
+                const houseRef = admin.firestore().collection('House').doc(houseId);
+
+                return houseRef.update({
+                    'numlikes': admin.firestore.FieldValue.increment(1)
+                }).then(() => {
+                    // Add the group ID and house ID to the GroupLikes collection
+                    const groupLikesRef = admin.firestore().collection('GroupLikes').doc(`${groupId}_${houseId}`);
+                    return groupLikesRef.set({
+                        groupId: groupId,
+                        houseId: houseId,
+                        email: null,
+                    }).then(() => {
+                        response.json({data: "Updated Document in Database"});
+                    });
+                });
+
+            }
+        }).catch((error) => {
+            response.status(500).send(error);
+        });
+    });
+});
+
+
+
+
+exports.getHouse = functions.https.onRequest((request, response) => {
+
+    cors(request, response, () => {
+        // 1. Connect to our Firestore database
+        console.log("The request made it in here");
+        let myData = [];
+        return admin.firestore().collection('House').get().then((snapshot) => {
+
+            if (snapshot.empty) {
+                console.log('No matching documents.');
+                response.json({data: {message : 'No data in database'}});
+                return;
+            }
+
+            snapshot.forEach(doc => {
+                console.log(doc.id);
+                myData.push(Object.assign(doc.data(), {id:doc.id}));
+            });
+            console.log(myData);
+
+            // 2. Send data back to client
+            response.json({data: myData});
+        });
+    });
+});
+
+
+exports.getImage = functions.https.onRequest((request, response) => {
+
+    cors(request, response, () => {
+        // 1. Connect to our Firestore database
+        console.log("The request made it in here");
+        let myData = [];
+        return admin.firestore().collection('House.image').get().then((snapshot) => {
+
+            if (snapshot.empty) {
+                console.log('No matching documents.');
+                response.json({data: {message: 'No data in database'}});
+                return;
+            }
+
+            snapshot.forEach(doc => {
+                console.log(doc.id);
+                myData.push(Object.assign(doc.data(), {id: doc.id}));
+            });
+            console.log(myData);
+
+            // 2. Send data back to client
+            response.json({data: myData});
+        });
+    });
+});
+
+exports.getgrouplikes = functions.https.onRequest((request, response) => {
+    cors(request, response, () => {
+        console.log("The request made it in here");
+        console.log(request.body.data.user);
+        console.log(request.body);
+        let myData = [];
+        const studentGroupQuery = admin.firestore().collection('StudentGroup').where('member', '==', request.body.data.user);
+        return studentGroupQuery.get().then((querySnapshot) => {
+            if (querySnapshot.empty) {
+                console.log('No matching documents.');
+                response.json({ data: { message: 'No data in database' } });
+                return;
+            }
+            const groupIds = [];
+            querySnapshot.forEach(doc => {
+                console.log(doc.data().groupId);
+                groupIds.push(doc.data().groupId);
+            });
+            console.log("Group IDs:", groupIds);
+            const groupLikesPromises = groupIds.map(groupId => {
+                return admin.firestore().collection('GroupLikes').where('groupId', '==', groupId).get().then((groupLikesSnapshot) => {
+                    if (groupLikesSnapshot.empty) {
+                        console.log('No matching documents.');
+                        return;
+                    }
+                    const houseIdsByEmail = {};
+                    groupLikesSnapshot.forEach(groupLikeDoc => {
+                        const houseId = groupLikeDoc.data().houseId;
+                        const email = groupLikeDoc.data().email;
+                        if (!houseIdsByEmail[email]) {
+                            houseIdsByEmail[email] = [];
+                        }
+                        houseIdsByEmail[email].push(houseId);
+                    });
+                    console.log("House IDs by email:", houseIdsByEmail);
+
+                    const housePromises = [];
+                    for (const [email, houseIds] of Object.entries(houseIdsByEmail)) {
+                        const promises = houseIds.map(houseId => {
+                            return admin.firestore().collection('House').doc(houseId).get().then((houseDoc) => {
+                                if (!houseDoc.exists) {
+                                    console.log('No such document!');
+                                    return;
+                                }
+                                console.log(houseDoc.id, " => ", houseDoc.data());
+                                const houseData = houseDoc.data();
+                                houseData.email = email; // Add email property to house data object
+                                myData.push(houseData);
+                            });
+                        });
+                        housePromises.push(Promise.all(promises));
+                    }
+                    return Promise.all(housePromises);
+                });
+            });
+            return Promise.all(groupLikesPromises).then(() => {
+                console.log("Data:", myData);
+                response.json({ data: myData });
+            }).catch(error => {
+                console.error(error);
+                response.status(500).send('Internal server error');
+            });
+        }).catch(error => {
+            console.error(error);
+            response.status(500).send('Internal server error');
+        });
+    });
+});
+
+
+
+exports.removelike = functions.https.onRequest((request, response) => {
+    cors(request, response, () => {
+        const studentGroupQuery = admin.firestore().collection('StudentGroup').where('member', '==', request.body.data.user);
+        return studentGroupQuery.get().then((querySnapshot) => {
+            if (querySnapshot.empty) {
+                response.status(404).send(`StudentGroup not found for user ${request.body.data.user}`);
+            } else {
+                const groupId = querySnapshot.docs[0].data().groupId;
+                const houseId = request.body.data.houseId;
+                const houseRef = admin.firestore().collection('House').doc(houseId);
+
+                // Update the house document to remove the group ID from the Likes array
+                return houseRef.update({
+                    'numlikes': admin.firestore.FieldValue.increment(-1)
+                }).then(() => {
+                    // Remove the group ID and house ID from the GroupLikes collection
+                    const groupLikesRef = admin.firestore().collection('GroupLikes').where('groupId', '==', groupId).where('houseId', '==', houseId);
+                    return groupLikesRef.get().then((querySnapshot) => {
+                        if (querySnapshot.empty) {
+                            response.status(404).send(`GroupLikes not found for group ${groupId} and house ${houseId}`);
+                        } else {
+                            const docRef = querySnapshot.docs[0].ref;
+                            return docRef.delete().then(() => {
+                                response.json({data: "Updated Document in Database"});
+                            });
+                        }
+                    });
+                });
+            }
+        }).catch((error) => {
+            response.status(500).send(error);
+        });
+    });
+});
+
+exports.getgrouplike = functions.https.onRequest((request, response) => {
+    cors(request, response, () => {
+        let houseIds = [];
+        const studentGroupQuery = admin.firestore().collection('StudentGroup').where('member', '==', request.body.data.user);
+        return studentGroupQuery.get().then((querySnapshot) => {
+            if (querySnapshot.empty) {
+                console.log('No matching documents.');
+                response.json({ data: { message: 'No data in database' } });
+                return;
+            }
+            const groupIds = [];
+            querySnapshot.forEach(doc => {
+                groupIds.push(doc.data().groupId);
+            });
+            const groupLikesPromises = groupIds.map(groupId => {
+                return admin.firestore().collection('GroupLikes').where('groupId', '==', groupId).get().then((groupLikesSnapshot) => {
+                    if (groupLikesSnapshot.empty) {
+                        console.log('No matching documents.');
+                        return;
+                    }
+                    groupLikesSnapshot.forEach(groupLikeDoc => {
+                        houseIds.push(groupLikeDoc.data().houseId);
+                    });
+                });
+            });
+            return Promise.all(groupLikesPromises).then(() => {
+                console.log("House IDs:", houseIds);
+                response.json({ data: houseIds });
+            });
+        })
+    });
+});
+
+exports.checkgroup = functions.https.onRequest((request, response) => {
+
+    cors(request, response, () => {
+
+        console.log("The request made it in here");
+        return admin.firestore().collection('StudentGroup').where('member','==',request.body.data.user).get().then((snapshot) => {
+
+            if (snapshot.empty) {
+                response.json({data:false});
+                return;
+            }
+
+            snapshot.forEach(doc => {
+                response.json({data:true});
+            });
+        });
+    });
+});
+
+exports.uploadImage = functions.https.onRequest((request, response) =>{
+    cors(request, response,  () => {
+
+        return admin.firestore().collection('Images').add(request.body).then(() => {
+            response.json({data: "Saved in the database"});
+        });
+    });
+});
+
+
+
+exports.gethouses = functions.https.onRequest((request, response) => {
+
+    cors(request, response, () => {
+        // 1. Connect to our Firestore database
+        console.log("The request made it in here");
+        const user = request.body.data.user;
+        console.log(user);
+        let myData = [];
+
+        return admin.firestore().collection('LandlordHouse').where('user', '==', user).get().then((snapshot) => {
+
+            if (snapshot.empty) {
+                console.log('No matching documents.');
+                response.json({data: {message : 'No data in database'}});
+                return;
+            }
+
+            let promises = [];
+            snapshot.forEach(doc => {
+                console.log(doc.id);
+                const houseId = doc.data().houseId;
+                promises.push(admin.firestore().collection('House').doc(houseId).get());
+            });
+
+            Promise.all(promises).then((houseDocs) => {
+                houseDocs.forEach((houseDoc) => {
+                    const houseData = Object.assign(houseDoc.data(), {id: houseDoc.id, index: 0}); // Add "index" field with a value of 0
+                    myData.push(houseData);
+                });
+                console.log(myData);
+
+                // 2. Send data back to client
+                response.json({data: myData});
+            }).catch((error) => {
+                console.log("Error getting house documents:", error);
+                response.json({data: {message : 'Error getting house documents'}});
+            });
+        });
+    });
+});
+
+
+exports.uploadHouse = functions.https.onRequest((request, response) => {
+    cors(request, response, () => {
+        console.log(request.body);
+        const landlord = request.body.data.user;
+        const houseData = {
+            location: request.body.data.location,
+            description: request.body.data.description,
+            numBed: request.body.data.numBed,
+            numBath: request.body.data.numBath,
+            image: request.body.data.image, // Save the image array as a field in the document
+            numlikes: request.body.data.numlikes,
+            mRent: request.body.data.mRent,
+            area:request.body.data.area,
+            user: landlord
+        };
+        return admin.firestore().collection('House').add(houseData).then((docRef) => {
+            const newHouseData = {
+                user: landlord,
+                houseId: docRef.id
+            };
+            return admin.firestore().collection('LandlordHouse').add(newHouseData);
+        }).then(() => {
+            response.json({data: "Saved in the database"});
+        }).catch((error) => {
+            console.error("Error adding document: ", error);
+            response.status(500).send("Error adding document: ", error);
+        })
+    });
+});
+
+exports.getLikes = functions.https.onRequest((request, response) => {
+
+    cors(request, response, () => {
+        // 1. Connect to our Firestore database
+        console.log("The request made it in here");
+        console.log()
+        const houseId = request.body.data.houseId;
+        console.log(houseId);
+        let myData = [];
+
+        return admin.firestore().collection('GroupLikes').where('houseId', '==', houseId).get().then((snapshot) => {
+
+            if (snapshot.empty) {
+                console.log('No matching documents.');
+                response.json({data: {message : 'No data in database'}});
+                return;
+            }
+
+            let promises = [];
+            snapshot.forEach(doc => {
+                console.log(doc.id);
+                const groupId = doc.data().groupId;
+                promises.push(admin.firestore().collection('Groups').doc(groupId).get());
+            });
+
+            Promise.all(promises).then((groupDocs) => {
+                groupDocs.forEach((groupDoc) => {
+                    myData.push(Object.assign(groupDoc.data(), {id: groupDoc.id}));
+                });
+                console.log(myData);
+
+                // 2. Send data back to client
+                response.json({data: myData});
+            }).catch((error) => {
+                console.log("Error getting house documents:", error);
+                response.json({data: {message : 'Error getting house documents'}});
+            });
+        });
+    });
+});
+
+exports.updatedetails = functions.https.onRequest((request, response) => {
+    cors(request, response, () => {
+        const groupId = request.body.data.groupId;
+        const owneremail = request.body.data.email;
+        const hId = request.body.data.houseId;
+        const docRef = `${groupId}_${hId}`;
+        console.log(docRef);
+        const groupLikesRef = admin.firestore().collection('GroupLikes').doc(docRef);
+
+        return groupLikesRef.update({
+            email: owneremail
+        }).then(() => {
+            response.json({ data: "Updated Document in Database" });
+        });
+
+    });
+});
+
+
+exports.deleteHouse = functions.https.onRequest((request, response) => {
+    cors(request, response, () => {
+        const houseId = request.body.data.houseId;
+        console.log(houseId);
+
+        const deleteGLQuery = admin.firestore().collection("GroupLikes").where('houseId', '==', houseId);
+        return deleteGLQuery.get().then((querySnapshot) => {
+
+            const deleteBatch = admin.firestore().batch();
+            querySnapshot.forEach((doc) => {
+                deleteBatch.delete(doc.ref);
+            });
+            return deleteBatch.commit().then(() => {
+                const deleteQuery = admin.firestore().collection("LandlordHouse").where('houseId', '==', houseId);
+                return deleteQuery.get().then((querySnapshot) => {
+                    console.log(querySnapshot.docs[0].data());
+                    const lHouseId = querySnapshot.docs[0].id;
+                    const lHouseRef = admin.firestore().collection('LandlordHouse').doc(lHouseId);
+                    return lHouseRef.delete().then(() => {
+                        admin.firestore().collection("House").doc(houseId).delete().then(() => {
+                            response.json({data: "Document successfully deleted"});
+                        });
+                    });
+                });
+            });
         });
     });
 });

@@ -1,46 +1,41 @@
 <template>
-
-
-  <body>
-  <div class="align-content-center"  style=" box-sizing: border-box; width: 500px;
+ <div class="fullPage">
+  <div class="align-content-center"  style=" position: absolute; box-sizing: border-box; width: 500px;
               height: 500px; background: white; border-radius: 15px; margin:10px;
               border-width: 10px; border-color: #00bd7e; " >
 
     <form class="login">
       <div>
-        <h1 style="color: black; font-size: 40px; font-family: Roboto Slab ;  " class="h2 mb-3 mt-5 fw-normal"> Accomodate.me</h1>
+        <h1 style="color: black; font-size: 40px; font-family: Roboto Slab ;  " class="h2 mb-3 mt-5 fw-normal">LANDLORD LOGIN</h1>
       </div>
       <hr style="width:50%; height: 10px; border: 5px cadetblue"/>
 
       <input class="inputone" v-model="email" type="email" placeholder="Email" required autofocus >
 
-      <input class="inputone" style="margin-top: 15px; margin-bottom: 15px;" v-model="password" type="password" placeholder="Password">
-      <div class="mt-2">
-        <div>Remember Me?</div>
-        <div class="mt-2"><input type="checkbox"></div>
-      </div>
+      <input class="inputone" v-model="password" style="margin-top: 15px; margin-bottom: 15px;" type="password" placeholder="Password">
 
 
 
 
-      <button  class="btn btn-lg btn-primary btn-block mt-5" @click.prevent="login()">LOG IN</button>
 
+      <button  @click.prevent="login()" class="btn btn-lg btn-primary btn-block mt-5">LOG IN</button>
+      <br>
+      <span class="forgot-password-link" @click.prevent="sendPasswordEmail()">Forgot Password?</span>
+      <span class="sign-up-link" @click="this.$router.push({path: '/OwnerSignUp'})">Don't have an account? Sign Up Here!</span>
 
 
     </form>
   </div>
-
-  </body>
+ </div>
 
 
 </template>
-
 <script>
 import app from "../api/firebase"
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import {getAuth, sendPasswordResetEmail, signInWithEmailAndPassword} from "firebase/auth";
 import {getFunctions, httpsCallable} from "firebase/functions";
 export default {
-  name: "OwnerLogin",
+  name: "StudentLogin",
   data() {
     return {
       email: "",
@@ -73,12 +68,23 @@ export default {
           this.$router.push({path: '/OwnerAccount'});
         }
       });
+  },
+    sendPasswordEmail(){
+      const auth = getAuth();
+      sendPasswordResetEmail(auth, this.email)
+          .then(() => {
+            // Password reset email sent!
+            // ..
+          })
+          .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            // ..
+          });
     }
-}
+  }
 }
 </script>
-
-
 <style>
 input[type="checkbox"]{
   -webkit-appearance: none;
@@ -111,30 +117,29 @@ input[type="checkbox"]:before{
 input[type="checkbox"]:after{
   content:"";
   position: absolute;
-  color: #181818;
+  color: #f2f2f2;
   left:38px;
   bottom: -5px;
   transition: 0.3s;
 }
 input[type="checkbox"]:checked{
-  background-color: cadetblue;
+  background-color: #790404;
 }
 input[type="checkbox"]:checked:before{
-  background-color: #181818;
+  background-color: #f2f2f2;
   left:18px;
 }
 input[type="checkbox"]:checked:after{
   content:"";
-  color:cadetblue;
+  color:#790404;
 }
-body{
-  background-color: #FFFDD0;
+.fullPage{
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 .login{
-
   max-width: 480px;
   margin: auto;
   display: flex;
@@ -202,5 +207,21 @@ label{
   transform: scale(0);
   opacity: 1;
   pointer-events: none;
+}
+.forgot-password-link {
+  color: rgb(16, 152, 197);
+  text-decoration: underline;
+  cursor: pointer;
+}
+.forgot-password-link:hover {
+  text-decoration: none;
+}
+.sign-up-link{
+  color: rgb(16, 152, 197);
+  text-decoration: underline;
+  cursor: pointer;
+}
+.sign-up-link:hover{
+  text-decoration: none;
 }
 </style>

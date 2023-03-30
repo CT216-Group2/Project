@@ -1,8 +1,9 @@
 <template>
-  <v-container>
+  <v-container class="fullPage">
     <v-row justify="center">
       <v-col cols="12" sm="8" md="4">
         <v-form ref="form" v-model="valid">
+          <h1 style="text-align: center;">Owner Sign Up</h1>
           <v-text-field
               v-model="name"
               :rules="nameRules"
@@ -24,14 +25,10 @@
               label="Password"
               required
           ></v-text-field>
-          <v-text-field
-              v-model="area"
-              :rules="areaRules"
-              label="Area"
-              required
-          ></v-text-field>
 
           <v-btn color="#790404" @click="register" :disabled="!valid"><a class="mainFont text-white">Sign Up</a></v-btn>
+          <br>
+          <span class="login-link" @click="this.$router.push({path: '/OwnerLogin'})">Already have an account? Log In Here!</span>
 
         </v-form>
       </v-col>
@@ -42,8 +39,7 @@
 <script>
 import {getFunctions, httpsCallable} from "firebase/functions";
 import app from "@/api/firebase";
-import {createUserWithEmailAndPassword, getAuth} from "firebase/auth";
-
+import {createUserWithEmailAndPassword, getAuth, sendEmailVerification} from "firebase/auth";
 export default {
   data(){
     return{
@@ -64,10 +60,6 @@ export default {
       passwordRules: [
         v => !!v || "Password is required",
         v => v.length >= 6 || "Password must be at least 6 characters"
-      ],
-      areaRules: [
-        v => !!v || "Area name is required",
-        v => v.length <= 20 || "Area name must be less than 20 characters"
       ]
     };
   },
@@ -75,7 +67,7 @@ export default {
     postOwner() {
       const functions = getFunctions(app);
       const postOwner = httpsCallable(functions, 'postowner');
-      postOwner({"name": this.name, "email": this.email, "area": this.area}).then((result) => {
+      postOwner({"name": this.name, "email": this.email}).then((result) => {
       });
     },
     register(){
@@ -87,6 +79,11 @@ export default {
             console.log(user)
             this.postOwner();
             this.$router.push({path: '/OwnerAccount'})
+            sendEmailVerification(user)
+                .then(() => {
+                  // Email verification sent!
+                  // ...
+                });
 // ...
           })
           .catch((error) => {
@@ -102,5 +99,15 @@ export default {
 </script>
 
 <style scoped>
-
+.fullPage{
+  font-family: Roboto Slab, serif;
+}
+.login-link{
+  color: rgb(16, 152, 197);
+  text-decoration: underline;
+  cursor: pointer;
+}
+.login-link:hover{
+  text-decoration: none;
+}
 </style>
